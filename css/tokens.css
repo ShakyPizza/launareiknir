@@ -1,0 +1,107 @@
+/* tokens.css — Design tokens. Only :root declarations live here.
+   All other CSS files reference these properties exclusively.
+   No hardcoded values anywhere else. */
+
+:root {
+  /* -----------------------------------------------
+     COLORS — Base Palette
+     Warm paper tones + near-black ink.
+     Single accent: volcanic terracotta.
+  ----------------------------------------------- */
+  --color-bg:              #F5F3EF;
+  --color-surface:         #EDEBE6;
+  --color-surface-raised:  #E6E3DC;
+  --color-rule:            #C8C4BB;
+  --color-text-muted:      #8A8680;
+  --color-text-body:       #2A2825;
+  --color-text-heading:    #1A1816;
+  --color-accent:          #8B4A3C;
+  --color-accent-light:    #C4856A;
+
+  /* -----------------------------------------------
+     COLORS — Semantic / Data
+     Used exclusively in the breakdown and visualization.
+     Muted, distinguishable — not traffic-light red/green.
+  ----------------------------------------------- */
+  --color-gross:           #2A4A3A;
+  --color-gross-light:     #4A7A62;
+  --color-tax:             #5A3A2A;
+  --color-tax-light:       #8A6050;
+  --color-social:          #3A3A5A;
+  --color-social-light:    #5A5A8A;
+  --color-deduction:       #4A4A2A;
+  --color-deduction-light: #7A7A4A;
+  --color-net:             #1A1816;
+
+  /* -----------------------------------------------
+     TYPOGRAPHY
+  ----------------------------------------------- */
+  --font-primary: "Inter", ui-sans-serif, system-ui, -apple-system,
+                  BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono:    ui-monospace, "Cascadia Code", "Fira Code", monospace;
+
+  /* Type scale — Major Third (1.25) from 16px base */
+  --text-xs:   0.75rem;    /*  12px */
+  --text-sm:   0.875rem;   /*  14px */
+  --text-base: 1rem;       /*  16px */
+  --text-md:   1.125rem;   /*  18px */
+  --text-lg:   1.25rem;    /*  20px */
+  --text-xl:   1.5rem;     /*  24px */
+  --text-2xl:  2rem;       /*  32px */
+  --text-3xl:  2.5rem;     /*  40px */
+
+  --weight-normal:   400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
+
+  --leading-tight:  1.2;
+  --leading-snug:   1.35;
+  --leading-normal: 1.5;
+
+  /* -----------------------------------------------
+     SPACING — 4px base unit
+  ----------------------------------------------- */
+  --space-1:  0.25rem;   /*  4px */
+  --space-2:  0.5rem;    /*  8px */
+  --space-3:  0.75rem;   /* 12px */
+  --space-4:  1rem;      /* 16px */
+  --space-5:  1.25rem;   /* 20px */
+  --space-6:  1.5rem;    /* 24px */
+  --space-8:  2rem;      /* 32px */
+  --space-10: 2.5rem;    /* 40px */
+  --space-12: 3rem;      /* 48px */
+  --space-16: 4rem;      /* 64px */
+  --space-20: 5rem;      /* 80px */
+  --space-24: 6rem;      /* 96px */
+
+  /* -----------------------------------------------
+     BORDERS
+     Sharp corners everywhere except inputs (--radius-sm).
+     Elevation via background tone, not shadows.
+  ----------------------------------------------- */
+  --radius-none: 0;
+  --radius-sm:   2px;   /* inputs only */
+  --radius-md:   4px;   /* reserved, use sparingly */
+
+  --border-width: 1px;
+  --border-color: var(--color-rule);
+  --border:       1px solid var(--color-rule);
+  --border-heavy: 2px solid var(--color-text-body);
+
+  /* -----------------------------------------------
+     SHADOWS
+     Only a focus ring — no structural shadows.
+  ----------------------------------------------- */
+  --shadow-none:  none;
+  --shadow-focus: 0 0 0 2px var(--color-accent);
+
+  /* -----------------------------------------------
+     LAYOUT
+  ----------------------------------------------- */
+  --content-max-width:  900px;
+  --content-padding-x:  var(--space-6);
+  --column-gap:         var(--space-8);
+  --section-gap:        var(--space-12);
+  --input-panel-width:  40%;
+  --result-panel-width: 60%;
+}

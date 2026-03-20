@@ -1,0 +1,130 @@
+/* layout.css — Page structure: header, main, footer, two-column calculator grid.
+   References tokens only. No component-level styles. */
+
+/* -----------------------------------------------
+   Page shell
+----------------------------------------------- */
+.page {
+  display:        flex;
+  flex-direction: column;
+  min-height:     100vh;
+}
+
+/* -----------------------------------------------
+   Content container (shared by header, main, footer)
+----------------------------------------------- */
+.container {
+  width:     100%;
+  max-width: var(--content-max-width);
+  margin:    0 auto;
+  padding:   0 var(--content-padding-x);
+}
+
+/* -----------------------------------------------
+   Site header
+----------------------------------------------- */
+.site-header {
+  border-bottom: var(--border-heavy);
+  padding:       var(--space-8) 0;
+}
+
+.site-header__inner {
+  display:         flex;
+  align-items:     baseline;
+  justify-content: space-between;
+  gap:             var(--space-4);
+  flex-wrap:       wrap;
+}
+
+.site-header__title {
+  font-size:      var(--text-2xl);
+  font-weight:    var(--weight-semibold);
+  letter-spacing: -0.02em;
+  color:          var(--color-text-heading);
+}
+
+.site-header__subtitle {
+  font-size:  var(--text-sm);
+  color:      var(--color-text-muted);
+  font-weight: var(--weight-normal);
+}
+
+/* -----------------------------------------------
+   Site main
+----------------------------------------------- */
+.site-main {
+  flex:    1;
+  padding: var(--space-12) 0;
+}
+
+/* -----------------------------------------------
+   Calculator two-column grid
+----------------------------------------------- */
+.calculator {
+  display:   grid;
+  grid-template-columns: var(--input-panel-width) 1fr;
+  gap:       var(--column-gap);
+  align-items: start;
+}
+
+.calculator__inputs {
+  position: sticky;
+  top:      var(--space-8);
+}
+
+.calculator__results {
+  /* Results panel: fills remaining width */
+}
+
+/* -----------------------------------------------
+   Section dividers within panels
+----------------------------------------------- */
+.panel-section {
+  padding-top:    var(--space-6);
+  border-top:     var(--border);
+  margin-top:     var(--space-6);
+}
+
+.panel-section:first-child {
+  border-top: none;
+  margin-top: 0;
+  padding-top: 0;
+}
+
+/* -----------------------------------------------
+   Site footer
+----------------------------------------------- */
+.site-footer {
+  border-top: var(--border);
+  padding:    var(--space-8) 0;
+  margin-top: var(--space-12);
+}
+
+.site-footer__inner {
+  /* uses .container */
+}
+
+.site-footer__note {
+  font-size:  var(--text-xs);
+  color:      var(--color-text-muted);
+  line-height: var(--leading-normal);
+  max-width:  60ch;
+}
+
+/* -----------------------------------------------
+   Responsive — single column on narrow viewports
+----------------------------------------------- */
+@media (max-width: 640px) {
+  .calculator {
+    grid-template-columns: 1fr;
+  }
+
+  .calculator__inputs {
+    position: static;
+  }
+
+  .site-header__inner {
+    flex-direction: column;
+    gap:            var(--space-2);
+  }
+}

@@ -1,0 +1,87 @@
+/* base.css — Reset, body defaults, and typographic baseline.
+   Imports nothing. References tokens only. */
+
+/* -----------------------------------------------
+   Box-sizing reset
+----------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* -----------------------------------------------
+   Document & body
+----------------------------------------------- */
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family:      var(--font-primary);
+  font-size:        var(--text-base);
+  font-weight:      var(--weight-normal);
+  line-height:      var(--leading-normal);
+  color:            var(--color-text-body);
+  background-color: var(--color-bg);
+  -webkit-font-smoothing:  antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* -----------------------------------------------
+   Typographic elements
+----------------------------------------------- */
+h1, h2, h3, h4, h5, h6 {
+  color:       var(--color-text-heading);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-tight);
+}
+
+p {
+  line-height: var(--leading-normal);
+}
+
+/* -----------------------------------------------
+   Interactive elements
+----------------------------------------------- */
+button,
+input,
+select,
+textarea {
+  font-family: var(--font-primary);
+  font-size:   var(--text-base);
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+a:hover {
+  color: var(--color-accent-light);
+}
+
+/* -----------------------------------------------
+   Lists used as layout (dl in breakdown table)
+----------------------------------------------- */
+dl, dt, dd {
+  margin: 0;
+  padding: 0;
+}
+
+/* -----------------------------------------------
+   Focus visible (global fallback for non-interactive elements)
+----------------------------------------------- */
+:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
