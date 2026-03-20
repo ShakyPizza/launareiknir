@@ -1,2 +1,17 @@
 # launareiknir
-A small static website for calculating and visual inspection of pay compared to taxes/deductions.
+
+Statísk vefsíða fyrir sjónrænan útreikning á mánaðarlaunum, staðgreiðslu og lífeyrissparnaði á Íslandi.
+
+## Keyrsla
+
+```bash
+npm install
+npm run dev
+```
+
+## Byggja og prófa
+
+```bash
+npm run test
+npm run build
+```

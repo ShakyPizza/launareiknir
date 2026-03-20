@@ -1,0 +1,23 @@
+{
+  "name": "launareiknir",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "jsdom": "^29.0.1",
+    "typescript": "^5.9.3",
+    "vite": "^8.0.1",
+    "vitest": "^4.1.0"
+  },
+  "dependencies": {
+    "@fontsource/newsreader": "^5.2.10",
+    "@fontsource/public-sans": "^5.2.7"
+  }
+}
