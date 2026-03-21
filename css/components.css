@@ -302,6 +302,7 @@
 .breakdown {
   margin:  0;
   padding: 0;
+  padding-top: var(--space-4);
 }
 
 .breakdown__group {
