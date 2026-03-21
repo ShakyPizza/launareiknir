@@ -1,5 +1,35 @@
 # Launareiknir — Design System & Coding Cookbook
 
+## Project goal
+
+A single static page (Icelandic) hosted on GitHub Pages that visualises monthly salary
+as `net pay`, `income tax`, and `pension savings`. Targets a regular wage earner using
+2026 Skatturinn rules, with no edge-case rules that would complicate the first release.
+
+All calculations are **monthly only** — no annual, weekly, or hourly modes in v1.
+
+---
+
+## Out of scope (v1)
+
+- Multiple employers
+- Spouse's personal allowance (persónuafsláttur maka)
+- Child tax credits
+- Limited tax liability (takmörkuð skattskylda)
+- Seafarer rules
+- Other specific deductions
+- Municipality selection
+
+---
+
+## Future work (post-v1)
+
+- Add English translation
+- Add Polish translation
+- Evaluate support for additional pay periods and special rules
+
+---
+
 ## Aesthetic direction
 
 **Swiss editorial / financial print.**
@@ -215,7 +245,18 @@ The formatters use the `is-IS` locale (period = thousands separator).
 | Mandatory pension (lífeyrissjóður) | **4%** of gross (reduces taxable base) |
 | Additional pension (séreign) | **0–4%** of gross (reduces taxable base) |
 
-Sources: skatturinn.is/einstaklingar/helstutolur/2026/
+Sources:
+- [Staðgreiðsla 2026](https://www.skatturinn.is/einstaklingar/stadgreidsla/stadgreidsla/2026)
+- [Persónuafsláttur](https://www.skatturinn.is/einstaklingar/stadgreidsla/personuafslattur/)
+- [Iðgjald í lífeyrissjóði](https://www.skatturinn.is/einstaklingar/tekjur-og-fradraettir/idgjald-i-lifeyrissjodi/)
+- [Helstu tölur og prósentur 2026](https://www.skatturinn.is/einstaklingar/helstutolur/2026/)
+
+### Personal allowance discrepancy
+
+Skatturinn publishes two slightly different annual figures: `869.898 kr.` on the
+withholding-tax page and `869.904 kr.` on the personal-allowance page (the latter
+being 12 × 72.492). Because this calculator is monthly-only, **72.492 kr./month is
+the controlling assumption** and the annual figure is never used directly.
 
 ---
 
