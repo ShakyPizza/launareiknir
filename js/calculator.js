@@ -54,10 +54,12 @@ function applyBrackets(taxableMonthly) {
  * Calculate a full monthly payroll breakdown.
  *
  * @param {Object} params
- * @param {number} params.grossMonthly         — gross monthly salary (ISK)
+ * @param {number} params.grossMonthly          — gross monthly salary (ISK)
  * @param {boolean} params.usePersonalAllowance — apply persónuafsláttur
+ * @param {boolean} params.useSpouseAllowance   — apply transferred persónuafsláttur maka
  * @param {boolean} params.usePensionFund       — deduct 4% lífeyrissjóður
  * @param {number} params.additionalPensionPct  — additional pension (séreign) 0–4
+ * @param {number} params.unionFeeAmount        — monthly union fee in ISK (deducted from net after tax)
  *
  * @returns {CalculationResult}
  *
@@ -68,9 +70,11 @@ function applyBrackets(taxableMonthly) {
  * @property {number} totalPensionAmount        — sum of both pension lines
  * @property {number} taxableBase               — gross minus total pension
  * @property {number} taxBeforeAllowance        — raw progressive tax on taxableBase
- * @property {number} personalAllowanceUsed     — allowance credit applied (≤ taxBeforeAllowance)
+ * @property {number} personalAllowanceUsed     — own allowance credit applied (≤ taxBeforeAllowance)
+ * @property {number} spouseAllowanceUsed       — spouse allowance credit applied
  * @property {number} taxAfterAllowance         — final income tax
- * @property {number} netSalary                 — take-home pay
+ * @property {number} unionFeeAmount            — union fee deducted from net pay
+ * @property {number} netSalary                 — take-home pay (after union fee)
  * @property {number} netShare                  — net / gross (0–1)
  * @property {number} taxShare                  — tax / gross (0–1)
  * @property {number} pensionShare              — mandatory pension / gross (0–1)
@@ -80,8 +84,10 @@ function applyBrackets(taxableMonthly) {
 export function calculate({
   grossMonthly,
   usePersonalAllowance = true,
+  useSpouseAllowance = false,
   usePensionFund = true,
   additionalPensionPct = 2,
+  unionFeeAmount = 0,
 }) {
   const gross = clampSalary(grossMonthly);
 
@@ -97,8 +103,16 @@ export function calculate({
     ? Math.min(PERSONAL_ALLOWANCE_MONTHLY_2026, taxBeforeAllowance)
     : 0;
 
-  const taxAfterAllowance = Math.max(taxBeforeAllowance - personalAllowanceUsed, 0);
-  const netSalary         = gross - totalPensionAmount - taxAfterAllowance;
+  const remainingTax = Math.max(taxBeforeAllowance - personalAllowanceUsed, 0);
+
+  const spouseAllowanceUsed = useSpouseAllowance
+    ? Math.min(PERSONAL_ALLOWANCE_MONTHLY_2026, remainingTax)
+    : 0;
+
+  const taxAfterAllowance = Math.max(remainingTax - spouseAllowanceUsed, 0);
+
+  const clampedUnionFee = Math.max(0, Math.round(unionFeeAmount));
+  const netSalary       = gross - totalPensionAmount - taxAfterAllowance - clampedUnionFee;
 
   const pct = (n) => gross === 0 ? 0 : n / gross;
 
@@ -110,7 +124,9 @@ export function calculate({
     taxableBase:             Math.round(taxableBase),
     taxBeforeAllowance:      Math.round(taxBeforeAllowance),
     personalAllowanceUsed:   Math.round(personalAllowanceUsed),
+    spouseAllowanceUsed:     Math.round(spouseAllowanceUsed),
     taxAfterAllowance:       Math.round(taxAfterAllowance),
+    unionFeeAmount:          clampedUnionFee,
     netSalary:               Math.round(netSalary),
     netShare:                pct(netSalary),
     taxShare:                pct(taxAfterAllowance),

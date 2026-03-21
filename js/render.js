@@ -172,6 +172,9 @@ export function renderBreakdown(result) {
   if (result.personalAllowanceUsed > 0) {
     html += row('Persónuafsláttur', -result.personalAllowanceUsed);
   }
+  if (result.spouseAllowanceUsed > 0) {
+    html += row('Persónuafsláttur maka', -result.spouseAllowanceUsed);
+  }
 
   html += row('Staðgreiðsla', -result.taxAfterAllowance);
 
@@ -186,6 +189,14 @@ export function renderBreakdown(result) {
     });
 
   html += `</div>`;
+
+  /* ── Group: Aðrar greiðslur ── */
+  if (result.unionFeeAmount > 0) {
+    html += `<div class="breakdown__group">`;
+    html += groupHeader('Aðrar greiðslur');
+    html += row('Iðgjald stéttarfélags', -result.unionFeeAmount);
+    html += `</div>`;
+  }
 
   /* ── Total ── */
   html += `<div class="breakdown__group">`;
