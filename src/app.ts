@@ -26,6 +26,9 @@ interface AppElements {
   taxAfterAllowanceValue: HTMLElement;
   netSalaryLineValue: HTMLElement;
   bracketList: HTMLElement;
+  gncGrossValue: HTMLElement;
+  gncNetValue: HTMLElement;
+  gncNetBar: HTMLElement;
 }
 
 const defaultState = {
@@ -188,6 +191,24 @@ function createMarkup(): string {
           <p class="source-panel__heading">${copy.notes.linksTitle}</p>
           <ul class="source-list">${links}</ul>
         </details>
+
+        <div class="gross-net-chart">
+          <h3>Brúttólaun á móti nettólaunum</h3>
+          <div class="gnc-row">
+            <span class="gnc-label">Brúttólaun</span>
+            <div class="gnc-bar-track">
+              <div class="gnc-bar gnc-bar--gross" style="width:100%"></div>
+            </div>
+            <span class="gnc-value" data-field="gnc-gross"></span>
+          </div>
+          <div class="gnc-row">
+            <span class="gnc-label">Nettólaun</span>
+            <div class="gnc-bar-track">
+              <div class="gnc-bar gnc-bar--net" data-field="gnc-net-bar"></div>
+            </div>
+            <span class="gnc-value" data-field="gnc-net"></span>
+          </div>
+        </div>
       </section>
     </main>
   `;
@@ -246,7 +267,10 @@ export function renderCalculator(container: HTMLElement): void {
     ) as HTMLElement,
     bracketList: container.querySelector(
       '[data-field="bracket-list"]'
-    ) as HTMLElement
+    ) as HTMLElement,
+    gncGrossValue: container.querySelector('[data-field="gnc-gross"]') as HTMLElement,
+    gncNetValue: container.querySelector('[data-field="gnc-net"]') as HTMLElement,
+    gncNetBar: container.querySelector('[data-field="gnc-net-bar"]') as HTMLElement
   };
 
   const state = { ...defaultState };
@@ -283,6 +307,10 @@ export function renderCalculator(container: HTMLElement): void {
       `${formatCurrency(result.taxAfterAllowance)} kr.`;
     elements.netSalaryLineValue.textContent =
       `${formatCurrency(result.netSalary)} kr.`;
+
+    elements.gncGrossValue.textContent = `${formatCurrency(result.grossSalary)} kr.`;
+    elements.gncNetValue.textContent = `${formatCurrency(result.netSalary)} kr.`;
+    elements.gncNetBar.style.width = `${result.netShare * 100}%`;
 
     elements.distributionBar.innerHTML = `
       <span class="distribution-segment distribution-segment--net" style="width:${result.netShare * 100}%"></span>
