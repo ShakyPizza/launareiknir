@@ -68,9 +68,9 @@
    Bottom graph — pay vs tax and deductions
 ----------------------------------------------- */
 .bottom-graph {
-  margin-top: var(--space-8);
-  padding-top: var(--space-6);
-  border-top: var(--border);
+  margin-top:  var(--space-6);
+  padding-top: var(--space-5);
+  border-top:  var(--border);
 }
 
 .bottom-graph__header {
@@ -96,8 +96,8 @@
 
 .bottom-graph__svg {
   display: block;
-  width: 100%;
-  height: auto;
+  width:   100%;
+  height:  auto;
 }
 
 .bottom-graph__legend {

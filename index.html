@@ -41,85 +41,99 @@
         <!-- INPUT PANEL -->
         <section class="calculator__inputs" aria-label="Inntaksgögn">
 
-          <!-- Gross salary -->
-          <div class="field field--salary">
-            <div class="field__header">
-              <label class="field__label" for="input-gross">Brúttólaun á mánuði</label>
-              <span class="field__badge" id="salary-badge">850.000 kr.</span>
-            </div>
-            <input
-              class="salary-slider"
-              type="range"
-              id="salary-range"
-              min="0"
-              max="5000000"
-              step="1000"
-              value="850000"
-              aria-label="Brúttólaun á mánuði (sleðareiknir)"
-            >
-            <div class="field__row">
-              <div class="field__wrapper">
-                <input
-                  class="field__input"
-                  type="number"
-                  id="input-gross"
-                  name="gross"
-                  min="0"
-                  max="5000000"
-                  step="1000"
-                  value="850000"
-                  inputmode="numeric"
-                  aria-label="Brúttólaun á mánuði (tölur)"
-                >
-                <span class="field__suffix" aria-hidden="true">kr.</span>
+          <div class="inputs-fields">
+
+            <!-- Gross salary -->
+            <div class="field field--salary">
+              <div class="field__header">
+                <label class="field__label" for="input-gross">Brúttólaun á mánuði</label>
+                <span class="field__badge" id="salary-badge">850.000 kr.</span>
+              </div>
+              <input
+                class="salary-slider"
+                type="range"
+                id="salary-range"
+                min="0"
+                max="5000000"
+                step="1000"
+                value="850000"
+                aria-label="Brúttólaun á mánuði (sleðareiknir)"
+              >
+              <div class="field__row">
+                <div class="field__wrapper">
+                  <input
+                    class="field__input"
+                    type="number"
+                    id="input-gross"
+                    name="gross"
+                    min="0"
+                    max="5000000"
+                    step="1000"
+                    value="850000"
+                    inputmode="numeric"
+                    aria-label="Brúttólaun á mánuði (tölur)"
+                  >
+                  <span class="field__suffix" aria-hidden="true">kr.</span>
+                </div>
               </div>
             </div>
-          </div>
 
-          <!-- Toggles -->
-          <div class="field field--toggles">
-            <span class="field__label">Stillingar</span>
-            <div class="toggle-group">
-              <label class="toggle" for="toggle-allowance">
-                <input
-                  class="toggle__input"
-                  type="checkbox"
-                  id="toggle-allowance"
-                  name="usePersonalAllowance"
-                  checked
-                >
-                <span class="toggle__track" aria-hidden="true"></span>
-                <span class="toggle__text">Persónuafsláttur</span>
-              </label>
-              <label class="toggle" for="toggle-pension">
-                <input
-                  class="toggle__input"
-                  type="checkbox"
-                  id="toggle-pension"
-                  name="usePensionFund"
-                  checked
-                >
-                <span class="toggle__track" aria-hidden="true"></span>
-                <span class="toggle__text">Lífeyrissjóður (4%)</span>
-              </label>
+            <!-- Toggles -->
+            <div class="field field--toggles">
+              <span class="field__label">Stillingar</span>
+              <div class="toggle-group">
+                <label class="toggle" for="toggle-allowance">
+                  <input
+                    class="toggle__input"
+                    type="checkbox"
+                    id="toggle-allowance"
+                    name="usePersonalAllowance"
+                    checked
+                  >
+                  <span class="toggle__track" aria-hidden="true"></span>
+                  <span class="toggle__text">Persónuafsláttur</span>
+                </label>
+                <label class="toggle" for="toggle-pension">
+                  <input
+                    class="toggle__input"
+                    type="checkbox"
+                    id="toggle-pension"
+                    name="usePensionFund"
+                    checked
+                  >
+                  <span class="toggle__track" aria-hidden="true"></span>
+                  <span class="toggle__text">Lífeyrissjóður (4%)</span>
+                </label>
+              </div>
             </div>
-          </div>
 
-          <!-- Additional pension (séreign) -->
-          <div class="field field--additional-pension">
-            <div class="field__header">
-              <label class="field__label" for="input-additional-pension">Séreign</label>
-              <span class="field__badge" id="additional-pension-badge">2%</span>
+            <!-- Additional pension (séreign) -->
+            <div class="field field--additional-pension">
+              <div class="field__header">
+                <label class="field__label" for="input-additional-pension">Séreign</label>
+                <span class="field__badge" id="additional-pension-badge">2%</span>
+              </div>
+              <div class="step-slider" role="group" aria-label="Séreignarhlutfall">
+                <button class="step-slider__btn step-slider__btn--active" data-value="0" type="button" aria-pressed="false">0%</button>
+                <button class="step-slider__btn" data-value="1" type="button" aria-pressed="false">1%</button>
+                <button class="step-slider__btn step-slider__btn--active" data-value="2" type="button" aria-pressed="true">2%</button>
+                <button class="step-slider__btn" data-value="3" type="button" aria-pressed="false">3%</button>
+                <button class="step-slider__btn" data-value="4" type="button" aria-pressed="false">4%</button>
+              </div>
+              <p class="field__hint">Frádráttarbær séreign (0–4% af brúttólaunum)</p>
             </div>
-            <div class="step-slider" role="group" aria-label="Séreignarhlutfall">
-              <button class="step-slider__btn step-slider__btn--active" data-value="0" type="button" aria-pressed="false">0%</button>
-              <button class="step-slider__btn" data-value="1" type="button" aria-pressed="false">1%</button>
-              <button class="step-slider__btn step-slider__btn--active" data-value="2" type="button" aria-pressed="true">2%</button>
-              <button class="step-slider__btn" data-value="3" type="button" aria-pressed="false">3%</button>
-              <button class="step-slider__btn" data-value="4" type="button" aria-pressed="false">4%</button>
+
+          </div><!-- /.inputs-fields -->
+
+          <!-- XY line chart — fills remaining column height -->
+          <section class="bottom-graph" aria-labelledby="bottom-graph-title">
+            <div class="bottom-graph__header">
+              <h2 class="bottom-graph__title" id="bottom-graph-title">Nettólaun og skattur sem fall af brúttólaunum</h2>
+              <p class="bottom-graph__hint">X-ás: brúttólaun (kr.) · Y-ás: hlutfall af brúttólaunum</p>
             </div>
-            <p class="field__hint">Frádráttarbær séreign (0–4% af brúttólaunum)</p>
-          </div>
+            <div class="bottom-graph__chart" id="bottom-graph-chart" aria-hidden="true"></div>
+            <div class="bottom-graph__legend" id="bottom-graph-legend" aria-hidden="true"></div>
+          </section>
 
         </section>
 
@@ -149,15 +163,6 @@
             <!-- Populated by render.js -->
           </dl>
 
-          <!-- Bottom XY line chart -->
-          <section class="bottom-graph" aria-labelledby="bottom-graph-title">
-            <div class="bottom-graph__header">
-              <h2 class="bottom-graph__title" id="bottom-graph-title">Nettólaun og skattur sem fall af brúttólaunum</h2>
-              <p class="bottom-graph__hint">X-ás: 0–100% af hámarksbrúttólaunum (5.000.000 kr.) · Y-ás: upphæð í kr.</p>
-            </div>
-            <div class="bottom-graph__chart" id="bottom-graph-chart" aria-hidden="true"></div>
-            <div class="bottom-graph__legend" id="bottom-graph-legend" aria-hidden="true"></div>
-          </section>
 
         </section>
 
@@ -178,7 +183,7 @@
             frádráttarbær á sama hátt.
           </p>
           <p>
-            Athugið: Þessi útreikningur er til viðmiðunar. Nákvæmar tölur
+            Athugið: Þessi útreikningur er einungis til viðmiðunar. Nákvæmar tölur
             geta verið mismunandi eftir aðstæðum.
           </p>
           <ul class="source-list">
