@@ -23,16 +23,15 @@ The calculator currently uses these official Skatturinn sources for its 2026 ass
 - [Iðgjald í lífeyrissjóði](https://www.skatturinn.is/einstaklingar/tekjur-og-fradraettir/idgjald-i-lifeyrissjodi/)
 - [Helstu tölur og prósentur 2026](https://www.skatturinn.is/einstaklingar/helstutolur/2026/)
 
-## Build And Test
-
-```bash
-npm run test
-npm run build
-```
-
 ## Run Locally
 
 ```bash
 npm install
 npm run dev
+```
+## Build And Test
+
+```bash
+npm run test
+npm run build
 ```
