@@ -12,10 +12,12 @@ import { renderHero, renderVisualization, renderBreakdown, renderBottomGraph } f
 /* ── Default state ─────────────────────────────────── */
 
 const state = {
-  grossMonthly:        850_000,
+  grossMonthly:         850_000,
   usePersonalAllowance: true,
+  useSpouseAllowance:   false,
   usePensionFund:       true,
   additionalPensionPct: 2,
+  unionFeeAmount:       0,
 };
 
 /* ── Element references ────────────────────────────── */
@@ -25,6 +27,8 @@ const elSalaryNumber         = /** @type {HTMLInputElement} */ (document.getElem
 const elSalaryBadge          = document.getElementById('salary-badge');
 const elToggleAllowance      = /** @type {HTMLInputElement} */ (document.getElementById('toggle-allowance'));
 const elTogglePension        = /** @type {HTMLInputElement} */ (document.getElementById('toggle-pension'));
+const elToggleSpouseAllowance = /** @type {HTMLInputElement} */ (document.getElementById('toggle-spouse-allowance'));
+const elUnionFeeInput        = /** @type {HTMLInputElement} */ (document.getElementById('input-union-fee'));
 const elAdditionalBadge      = document.getElementById('additional-pension-badge');
 const elStepBtns             = /** @type {NodeListOf<HTMLButtonElement>} */ (
   document.querySelectorAll('.step-slider__btn')
@@ -85,6 +89,17 @@ elToggleAllowance.addEventListener('change', () => {
 
 elTogglePension.addEventListener('change', () => {
   state.usePensionFund = elTogglePension.checked;
+  render();
+});
+
+elToggleSpouseAllowance.addEventListener('change', () => {
+  state.useSpouseAllowance = elToggleSpouseAllowance.checked;
+  render();
+});
+
+elUnionFeeInput.addEventListener('input', () => {
+  const raw = Number(elUnionFeeInput.value);
+  state.unionFeeAmount = Number.isFinite(raw) && raw >= 0 ? Math.round(raw) : 0;
   render();
 });
 

@@ -104,6 +104,16 @@
                   <span class="toggle__track" aria-hidden="true"></span>
                   <span class="toggle__text">Lífeyrissjóður (4%)</span>
                 </label>
+                <label class="toggle" for="toggle-spouse-allowance">
+                  <input
+                    class="toggle__input"
+                    type="checkbox"
+                    id="toggle-spouse-allowance"
+                    name="useSpouseAllowance"
+                  >
+                  <span class="toggle__track" aria-hidden="true"></span>
+                  <span class="toggle__text">Persónuafsláttur maka</span>
+                </label>
               </div>
             </div>
 
@@ -121,6 +131,31 @@
                 <button class="step-slider__btn" data-value="4" type="button" aria-pressed="false">4%</button>
               </div>
               <p class="field__hint">Frádráttarbær séreign (0–4% af brúttólaunum)</p>
+            </div>
+
+            <!-- Union fee -->
+            <div class="field field--union-fee">
+              <div class="field__header">
+                <label class="field__label" for="input-union-fee">Iðgjald stéttarfélags</label>
+              </div>
+              <div class="field__row">
+                <div class="field__wrapper">
+                  <input
+                    class="field__input"
+                    type="number"
+                    id="input-union-fee"
+                    name="unionFee"
+                    min="0"
+                    max="100000"
+                    step="100"
+                    value="0"
+                    inputmode="numeric"
+                    aria-label="Mánaðarlegt iðgjald í stéttarfélag"
+                  >
+                  <span class="field__suffix" aria-hidden="true">kr.</span>
+                </div>
+              </div>
+              <p class="field__hint">Dregið frá eftir skatt (venjulega 0,5–1% af brúttólaunum)</p>
             </div>
 
           </div><!-- /.inputs-fields -->
