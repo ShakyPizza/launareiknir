@@ -23,14 +23,14 @@
      Used exclusively in the breakdown and visualization.
      Muted, distinguishable — not traffic-light red/green.
   ----------------------------------------------- */
-  --color-gross:           #2A4A3A;
-  --color-gross-light:     #4A7A62;
-  --color-tax:             #5A3A2A;
-  --color-tax-light:       #8A6050;
-  --color-social:          #3A3A5A;
-  --color-social-light:    #5A5A8A;
-  --color-deduction:       #4A4A2A;
-  --color-deduction-light: #7A7A4A;
+  --color-gross:           #1A6B42;  /* vivid forest green ~150° */
+  --color-gross-light:     #2AA065;
+  --color-tax:             #8B3018;  /* vivid rust ~15° */
+  --color-tax-light:       #C05030;
+  --color-social:          #1E3D82;  /* vivid royal blue ~225° */
+  --color-social-light:    #3060C0;
+  --color-deduction:       #7A6510;  /* vivid amber-gold ~50° */
+  --color-deduction-light: #B09020;
   --color-net:             #1A1816;
 
   /* -----------------------------------------------

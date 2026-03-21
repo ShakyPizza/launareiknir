@@ -28,7 +28,9 @@
    Proportion labels (below the bar)
 ----------------------------------------------- */
 .viz-labels {
-  display:        flex;
+  display:        grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap:            var(--space-3);
   margin-bottom:  var(--space-6);
   border-top:     none;
 }
@@ -37,9 +39,24 @@
   display:        flex;
   flex-direction: column;
   gap:            var(--space-1);
-  padding:        var(--space-2) var(--space-3) var(--space-2) 0;
+  padding:        var(--space-3);
   min-width:      0;
-  overflow:       hidden;
+  border:         var(--border);
+  border-radius:  var(--radius-md);
+  background:     var(--color-surface);
+}
+
+.viz-label__head {
+  display:        inline-flex;
+  align-items:    center;
+  gap:            var(--space-2);
+}
+
+.viz-label__swatch {
+  width:          12px;
+  height:         12px;
+  border-radius:  999px;
+  flex:           0 0 12px;
 }
 
 .viz-label__pct {
@@ -53,15 +70,17 @@
 .viz-label__name {
   font-size:   var(--text-xs);
   color:       var(--color-text-muted);
-  white-space: nowrap;
-  overflow:    hidden;
-  text-overflow: ellipsis;
+  line-height: var(--leading-snug);
 }
 
 /* Color variants — match segment colors */
+.viz-label--net .viz-label__swatch        { background: var(--color-gross); }
 .viz-label--net .viz-label__pct      { color: var(--color-gross); }
+.viz-label--tax .viz-label__swatch        { background: var(--color-tax); }
 .viz-label--tax .viz-label__pct      { color: var(--color-tax); }
+.viz-label--pension .viz-label__swatch    { background: var(--color-social); }
 .viz-label--pension .viz-label__pct  { color: var(--color-social); }
+.viz-label--additional .viz-label__swatch { background: var(--color-deduction); }
 .viz-label--additional .viz-label__pct { color: var(--color-deduction); }
 
 /* -----------------------------------------------
@@ -70,7 +89,6 @@
 .bottom-graph {
   margin-top:  var(--space-6);
   padding-top: var(--space-5);
-  border-top:  var(--border);
 }
 
 .bottom-graph__header {
