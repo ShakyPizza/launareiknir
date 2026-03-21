@@ -8,13 +8,13 @@
   --border: rgba(54, 44, 34, 0.12);
   --text: #1e1b18;
   --muted: #665c52;
-  --accent: #1f6a52;
+  --accent: #2fa37a;
   --accent-soft: #dce9e1;
-  --tax: #8a3f2d;
+  --tax: #c4603f;
   --tax-soft: #edd8d1;
-  --pension: #876a2b;
+  --pension: #c49a30;
   --pension-soft: #ece1c5;
-  --additional: #547a88;
+  --additional: #4fa0b8;
   --additional-soft: #dce8ec;
   --shadow: 0 20px 60px rgba(61, 39, 18, 0.12);
   --radius-xl: 28px;
@@ -455,6 +455,64 @@ h3 {
 
 .source-list li + li {
   margin-top: 0.3rem;
+}
+
+.gross-net-chart {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(54, 44, 34, 0.15);
+  display: grid;
+  gap: 0.75rem;
+}
+
+.gross-net-chart h3 {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0 0 0.25rem;
+}
+
+.gnc-row {
+  display: grid;
+  grid-template-columns: 7rem 1fr auto;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.gnc-label {
+  font-size: 0.88rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.gnc-bar-track {
+  height: 0.625rem;
+  background: rgba(54, 44, 34, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.gnc-bar {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 200ms ease;
+}
+
+.gnc-bar--gross {
+  background: rgba(54, 44, 34, 0.25);
+}
+
+.gnc-bar--net {
+  background: var(--accent);
+}
+
+.gnc-value {
+  font-size: 0.88rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  white-space: nowrap;
 }
 
 .sr-only {
