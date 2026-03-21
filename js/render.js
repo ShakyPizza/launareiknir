@@ -228,11 +228,19 @@ export function renderBottomGraph(result, curve) {
   const toY = (share) => MT + CH - Math.max(share, 0) * CH;
 
   /* ── Colors ──────────────────────────────────── */
-  const colorNet    = cssVar('--color-gross');
-  const colorTax    = cssVar('--color-tax');
-  const colorRule   = cssVar('--color-rule');
-  const colorMuted  = cssVar('--color-text-muted');
-  const colorAccent = cssVar('--color-accent');
+  const colorNet        = cssVar('--color-gross');
+  const colorTax        = cssVar('--color-tax');
+  const colorPension    = cssVar('--color-social');
+  const colorAdditional = cssVar('--color-deduction');
+  const colorTotal      = cssVar('--color-text-muted');
+  const colorRule       = cssVar('--color-rule');
+  const colorMuted      = cssVar('--color-text-muted');
+  const colorAccent     = cssVar('--color-accent');
+
+  const hasPension    = result.pensionFundAmount > 0;
+  const hasAdditional = result.additionalPensionAmount > 0;
+
+  const totalShare = result.netShare + result.pensionShare + result.additionalPensionShare;
 
   /* ── Y axis: 0–100% share of gross ──────────── */
   const yTicks = [0, 0.25, 0.5, 0.75, 1.0];
@@ -254,22 +262,31 @@ export function renderBottomGraph(result, curve) {
       <text x="${x}" y="${MT + CH + 14}" text-anchor="middle" font-size="9" font-family="Inter,sans-serif" fill="${colorMuted}">${label}</text>`;
   }).join('\n      ');
 
-  /* ── Polyline point strings ──────────────────── */
-  const netPoints = curve.map((p) => {
-    const share = p.gross > 0 ? p.net / p.gross : 0;
-    return `${toX(p.gross).toFixed(1)},${toY(share).toFixed(1)}`;
-  }).join(' ');
-  const taxPoints = curve.map((p) => {
-    const share = p.gross > 0 ? p.tax / p.gross : 0;
+  /* ── Polyline helpers ────────────────────────── */
+  const pts = (getter) => curve.map((p) => {
+    const share = p.gross > 0 ? getter(p) / p.gross : 0;
     return `${toX(p.gross).toFixed(1)},${toY(share).toFixed(1)}`;
   }).join(' ');
 
+  const netPoints        = pts((p) => p.net);
+  const taxPoints        = pts((p) => p.tax);
+  const pensionPoints    = pts((p) => p.pension);
+  const additionalPoints = pts((p) => p.additionalPension);
+  const totalPoints      = pts((p) => p.net + p.pension + p.additionalPension);
+
   /* ── Current salary marker (vertical rule) ───── */
   const mx = toX(result.grossSalary).toFixed(1);
+
+  const dot = (share, color) =>
+    `<circle cx="${mx}" cy="${toY(share).toFixed(1)}" r="3" fill="${color}"/>`;
+
   const marker = `
       <line x1="${mx}" y1="${MT}" x2="${mx}" y2="${MT + CH}" stroke="${colorAccent}" stroke-width="1" stroke-dasharray="4,3"/>
-      <circle cx="${mx}" cy="${toY(result.netShare).toFixed(1)}" r="3.5" fill="${colorNet}"/>
-      <circle cx="${mx}" cy="${toY(result.taxShare).toFixed(1)}" r="3.5" fill="${colorTax}"/>`;
+      ${dot(result.netShare, colorNet)}
+      ${dot(result.taxShare, colorTax)}
+      ${hasPension    ? dot(result.pensionShare, colorPension)       : ''}
+      ${hasAdditional ? dot(result.additionalPensionShare, colorAdditional) : ''}
+      ${dot(totalShare, colorTotal)}`;
 
   /* ── Assemble SVG ────────────────────────────── */
   chartEl.innerHTML = `<svg
@@ -277,27 +294,33 @@ export function renderBottomGraph(result, curve) {
       viewBox="0 0 ${W} ${H}"
       xmlns="http://www.w3.org/2000/svg"
       role="img"
-      aria-label="Hlutfall nettólauna og skatts af brúttólaunum"
+      aria-label="Hlutfall launa og skatts af brúttólaunum"
     >
       ${yGrid}
       ${xGrid}
       <line x1="${ML}" y1="${MT}" x2="${ML}" y2="${MT + CH}" stroke="${colorRule}" stroke-width="1"/>
       <line x1="${ML}" y1="${MT + CH}" x2="${ML + CW}" y2="${MT + CH}" stroke="${colorRule}" stroke-width="1"/>
-      <polyline points="${netPoints}" fill="none" stroke="${colorNet}" stroke-width="1.5" stroke-linejoin="round"/>
-      <polyline points="${taxPoints}" fill="none" stroke="${colorTax}" stroke-width="1.5" stroke-linejoin="round"/>
+      ${hasPension    ? `<polyline points="${pensionPoints}"    fill="none" stroke="${colorPension}"    stroke-width="1.5" stroke-linejoin="round"/>` : ''}
+      ${hasAdditional ? `<polyline points="${additionalPoints}" fill="none" stroke="${colorAdditional}" stroke-width="1.5" stroke-linejoin="round"/>` : ''}
+      <polyline points="${taxPoints}"   fill="none" stroke="${colorTax}"   stroke-width="1.5" stroke-linejoin="round"/>
+      <polyline points="${netPoints}"   fill="none" stroke="${colorNet}"   stroke-width="1.5" stroke-linejoin="round"/>
+      <polyline points="${totalPoints}" fill="none" stroke="${colorTotal}" stroke-width="1"   stroke-linejoin="round" stroke-dasharray="5,3"/>
       ${marker}
     </svg>`;
 
   /* ── Legend ──────────────────────────────────── */
-  legendEl.innerHTML = `
+  const legendItem = (color, label, value) => `
     <div class="bottom-graph__item">
-      <i class="bottom-graph__swatch" style="background:${colorNet}" aria-hidden="true"></i>
-      <span class="bottom-graph__label">Nettólaun %</span>
-      <span class="bottom-graph__value">${formatPct(result.netShare)}</span>
-    </div>
-    <div class="bottom-graph__item">
-      <i class="bottom-graph__swatch" style="background:${colorTax}" aria-hidden="true"></i>
-      <span class="bottom-graph__label">Staðgreiðsla %</span>
-      <span class="bottom-graph__value">${formatPct(result.taxShare)}</span>
+      <i class="bottom-graph__swatch" style="background:${color}" aria-hidden="true"></i>
+      <span class="bottom-graph__label">${label}</span>
+      <span class="bottom-graph__value">${value}</span>
     </div>`;
+
+  legendEl.innerHTML = [
+    legendItem(colorNet,   'Nettólaun',              formatPct(result.netShare)),
+    legendItem(colorTax,   'Staðgreiðsla',           formatPct(result.taxShare)),
+    hasPension    ? legendItem(colorPension,    'Lífeyrissjóður', formatPct(result.pensionShare))         : '',
+    hasAdditional ? legendItem(colorAdditional, 'Séreign',        formatPct(result.additionalPensionShare)) : '',
+    legendItem(colorTotal, 'Nettólaun og sjóðir samtals', formatPct(totalShare)),
+  ].join('');
 }
