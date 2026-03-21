@@ -63,3 +63,77 @@
 .viz-label--tax .viz-label__pct      { color: var(--color-tax); }
 .viz-label--pension .viz-label__pct  { color: var(--color-social); }
 .viz-label--additional .viz-label__pct { color: var(--color-deduction); }
+
+/* -----------------------------------------------
+   Bottom graph — pay vs tax and deductions
+----------------------------------------------- */
+.bottom-graph {
+  margin-top:  var(--space-6);
+  padding-top: var(--space-5);
+  border-top:  var(--border);
+}
+
+.bottom-graph__header {
+  margin-bottom: var(--space-4);
+}
+
+.bottom-graph__title {
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-heading);
+  margin: 0 0 var(--space-1);
+}
+
+.bottom-graph__hint {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.bottom-graph__chart {
+  width: 100%;
+}
+
+.bottom-graph__svg {
+  display: block;
+  width:   100%;
+  height:  auto;
+}
+
+.bottom-graph__legend {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.bottom-graph__item {
+  display: grid;
+  grid-template-columns: 12px minmax(0, auto) 1fr;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.bottom-graph__swatch {
+  width: 12px;
+  height: 12px;
+  display: inline-block;
+}
+
+.bottom-graph__label {
+  font-size: var(--text-sm);
+  color: var(--color-text-body);
+}
+
+.bottom-graph__value {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 640px) {
+  .bottom-graph__legend {
+    grid-template-columns: 1fr;
+  }
+}

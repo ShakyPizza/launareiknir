@@ -6,8 +6,8 @@
  * @module app
  */
 
-import { calculate, clampSalary } from './calculator.js';
-import { renderHero, renderVisualization, renderBreakdown } from './render.js';
+import { calculate, clampSalary, buildCurveData } from './calculator.js';
+import { renderHero, renderVisualization, renderBreakdown, renderBottomGraph } from './render.js';
 
 /* ── Default state ─────────────────────────────────── */
 
@@ -59,9 +59,11 @@ function syncStepBtns(selectedValue) {
 
 function render() {
   const result = calculate(state);
+  const curve  = buildCurveData(state);
   renderHero(result);
   renderVisualization(result);
   renderBreakdown(result);
+  renderBottomGraph(result, curve);
 }
 
 /* ── Event listeners ───────────────────────────────── */

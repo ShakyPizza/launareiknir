@@ -196,3 +196,131 @@ export function renderBreakdown(result) {
 
   container.innerHTML = html;
 }
+
+/**
+ * Render the bottom XY line chart.
+ * X axis: gross salary 0–5M kr. Y axis: share of gross 0–100%.
+ * Net% line falls and tax% line rises as gross increases — the key story.
+ *
+ * @param {import('./calculator.js').CalculationResult} result — current calculation (for the marker)
+ * @param {Array<{ gross: number, net: number, tax: number }>} curve — pre-computed sweep
+ */
+export function renderBottomGraph(result, curve) {
+  const chartEl  = document.getElementById('bottom-graph-chart');
+  const legendEl = document.getElementById('bottom-graph-legend');
+  if (!chartEl || !legendEl) return;
+
+  if (result.grossSalary === 0 || !curve || curve.length === 0) {
+    chartEl.innerHTML  = '';
+    legendEl.innerHTML = '';
+    return;
+  }
+
+  /* ── Layout constants ────────────────────────── */
+  const W = 560, H = 200;
+  const ML = 44, MR = 12, MT = 12, MB = 26;
+  const CW = W - ML - MR;
+  const CH = H - MT - MB;
+  const MAX = 5_000_000;
+
+  /* X = gross salary (kr), Y = share of gross (0–1, inverted for SVG) */
+  const toX = (gross) => ML + (gross / MAX) * CW;
+  const toY = (share) => MT + CH - Math.max(share, 0) * CH;
+
+  /* ── Colors ──────────────────────────────────── */
+  const colorNet        = cssVar('--color-gross');
+  const colorTax        = cssVar('--color-tax');
+  const colorPension    = cssVar('--color-social');
+  const colorAdditional = cssVar('--color-deduction');
+  const colorTotal      = cssVar('--color-text-muted');
+  const colorRule       = cssVar('--color-rule');
+  const colorMuted      = cssVar('--color-text-muted');
+  const colorAccent     = cssVar('--color-accent');
+
+  const hasPension    = result.pensionFundAmount > 0;
+  const hasAdditional = result.additionalPensionAmount > 0;
+
+  const totalShare = result.netShare + result.pensionShare + result.additionalPensionShare;
+
+  /* ── Y axis: 0–100% share of gross ──────────── */
+  const yTicks = [0, 0.25, 0.5, 0.75, 1.0];
+  const yGrid  = yTicks.map((pct) => {
+    const y     = toY(pct);
+    const label = `${Math.round(pct * 100)}%`;
+    const dash  = pct === 0 ? '' : ' stroke-dasharray="3,3"';
+    return `<line x1="${ML}" y1="${y}" x2="${ML + CW}" y2="${y}" stroke="${colorRule}" stroke-width="0.5"${dash}/>
+      <text x="${ML - 5}" y="${y}" text-anchor="end" dominant-baseline="middle" font-size="9" font-family="Inter,sans-serif" fill="${colorMuted}">${label}</text>`;
+  }).join('\n      ');
+
+  /* ── X axis: gross salary 0–5M kr ───────────── */
+  const xTicks = [0, 1_000_000, 2_000_000, 3_000_000, 4_000_000, 5_000_000];
+  const xGrid  = xTicks.map((v) => {
+    const x     = toX(v);
+    const label = v === 0 ? '0' : `${v / 1_000_000}M`;
+    const dash  = v === 0 ? '' : ' stroke-dasharray="3,3"';
+    return `<line x1="${x}" y1="${MT}" x2="${x}" y2="${MT + CH}" stroke="${colorRule}" stroke-width="0.5"${dash}/>
+      <text x="${x}" y="${MT + CH + 14}" text-anchor="middle" font-size="9" font-family="Inter,sans-serif" fill="${colorMuted}">${label}</text>`;
+  }).join('\n      ');
+
+  /* ── Polyline helpers ────────────────────────── */
+  const pts = (getter) => curve.map((p) => {
+    const share = p.gross > 0 ? getter(p) / p.gross : 0;
+    return `${toX(p.gross).toFixed(1)},${toY(share).toFixed(1)}`;
+  }).join(' ');
+
+  const netPoints        = pts((p) => p.net);
+  const taxPoints        = pts((p) => p.tax);
+  const pensionPoints    = pts((p) => p.pension);
+  const additionalPoints = pts((p) => p.additionalPension);
+  const totalPoints      = pts((p) => p.net + p.pension + p.additionalPension);
+
+  /* ── Current salary marker (vertical rule) ───── */
+  const mx = toX(result.grossSalary).toFixed(1);
+
+  const dot = (share, color) =>
+    `<circle cx="${mx}" cy="${toY(share).toFixed(1)}" r="3" fill="${color}"/>`;
+
+  const marker = `
+      <line x1="${mx}" y1="${MT}" x2="${mx}" y2="${MT + CH}" stroke="${colorAccent}" stroke-width="1" stroke-dasharray="4,3"/>
+      ${dot(result.netShare, colorNet)}
+      ${dot(result.taxShare, colorTax)}
+      ${hasPension    ? dot(result.pensionShare, colorPension)       : ''}
+      ${hasAdditional ? dot(result.additionalPensionShare, colorAdditional) : ''}
+      ${dot(totalShare, colorTotal)}`;
+
+  /* ── Assemble SVG ────────────────────────────── */
+  chartEl.innerHTML = `<svg
+      class="bottom-graph__svg"
+      viewBox="0 0 ${W} ${H}"
+      xmlns="http://www.w3.org/2000/svg"
+      role="img"
+      aria-label="Hlutfall launa og skatts af brúttólaunum"
+    >
+      ${yGrid}
+      ${xGrid}
+      <line x1="${ML}" y1="${MT}" x2="${ML}" y2="${MT + CH}" stroke="${colorRule}" stroke-width="1"/>
+      <line x1="${ML}" y1="${MT + CH}" x2="${ML + CW}" y2="${MT + CH}" stroke="${colorRule}" stroke-width="1"/>
+      ${hasPension    ? `<polyline points="${pensionPoints}"    fill="none" stroke="${colorPension}"    stroke-width="1.5" stroke-linejoin="round"/>` : ''}
+      ${hasAdditional ? `<polyline points="${additionalPoints}" fill="none" stroke="${colorAdditional}" stroke-width="1.5" stroke-linejoin="round"/>` : ''}
+      <polyline points="${taxPoints}"   fill="none" stroke="${colorTax}"   stroke-width="1.5" stroke-linejoin="round"/>
+      <polyline points="${netPoints}"   fill="none" stroke="${colorNet}"   stroke-width="1.5" stroke-linejoin="round"/>
+      <polyline points="${totalPoints}" fill="none" stroke="${colorTotal}" stroke-width="1"   stroke-linejoin="round" stroke-dasharray="5,3"/>
+      ${marker}
+    </svg>`;
+
+  /* ── Legend ──────────────────────────────────── */
+  const legendItem = (color, label, value) => `
+    <div class="bottom-graph__item">
+      <i class="bottom-graph__swatch" style="background:${color}" aria-hidden="true"></i>
+      <span class="bottom-graph__label">${label}</span>
+      <span class="bottom-graph__value">${value}</span>
+    </div>`;
+
+  legendEl.innerHTML = [
+    legendItem(colorNet,   'Nettólaun',              formatPct(result.netShare)),
+    legendItem(colorTax,   'Staðgreiðsla',           formatPct(result.taxShare)),
+    hasPension    ? legendItem(colorPension,    'Lífeyrissjóður', formatPct(result.pensionShare))         : '',
+    hasAdditional ? legendItem(colorAdditional, 'Séreign',        formatPct(result.additionalPensionShare)) : '',
+    legendItem(colorTotal, 'Nettólaun og sjóðir samtals', formatPct(totalShare)),
+  ].join('');
+}

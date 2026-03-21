@@ -121,6 +121,33 @@ export function calculate({
 }
 
 /**
+ * Build an array of { gross, net, tax } data points sweeping the full salary range.
+ * Used by the XY line chart in render.js.
+ *
+ * @param {Object} params — same option flags as calculate(); grossMonthly is swept internally
+ * @param {boolean} params.usePersonalAllowance
+ * @param {boolean} params.usePensionFund
+ * @param {number}  params.additionalPensionPct
+ * @param {number}  [steps=100]
+ * @returns {Array<{ gross: number, net: number, tax: number }>}
+ */
+export function buildCurveData(params, steps = 100) {
+  const points = [];
+  for (let i = 0; i <= steps; i++) {
+    const gross = Math.round((i / steps) * MAX_GROSS_SALARY);
+    const r = calculate({ ...params, grossMonthly: gross });
+    points.push({
+      gross,
+      net:               r.netSalary,
+      tax:               r.taxAfterAllowance,
+      pension:           r.pensionFundAmount,
+      additionalPension: r.additionalPensionAmount,
+    });
+  }
+  return points;
+}
+
+/**
  * Format a number as Icelandic króna.
  * Uses the IS locale: period as thousands separator, no decimals.
  *
