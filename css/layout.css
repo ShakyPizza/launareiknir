@@ -77,7 +77,8 @@
 }
 
 .calculator__results {
-  /* Results panel: fills remaining width */
+  position: sticky;
+  top:       var(--space-6);
 }
 
 /* -----------------------------------------------
