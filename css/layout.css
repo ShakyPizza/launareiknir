@@ -70,6 +70,8 @@
 .calculator__inputs {
   display:        flex;
   flex-direction: column;
+  position:       sticky;
+  top:            var(--space-6);
 }
 
 .inputs-fields {
@@ -77,8 +79,7 @@
 }
 
 .calculator__results {
-  position: sticky;
-  top:       var(--space-6);
+  /* Results panel: fills remaining width */
 }
 
 /* -----------------------------------------------
