@@ -28,14 +28,6 @@ with sources so the team can decide which items to prioritize for future release
 - [ ] **Employer pension contribution: 11,5% of gross** — Employers pay this on top of salary; does not reduce employee net pay but is relevant for total cost-of-employment display — [source](https://www.skatturinn.is/einstaklingar/tekjur-og-fradraettir/idgjald-i-lifeyrissjodi/)
 - [ ] **Employer séreign match: +2% when employee contributes séreign** — Employers add 2% on top of the employee's séreign contribution — [source](https://www.lifeyrismal.is/en/qa/additional-pension-savings)
 
-#### Municipal Tax (sveitarfélag)
-
-- [ ] **Municipal tax rate varies by municipality: 12,44% – 14,94%** — The bracket percentages (31,49% / 37,99% / 46,29%) already include the national-average municipal rate of 14,94%. A municipality selector could let users see the exact rate for their location — [source](https://www.skatturinn.is/einstaklingar/helstutolur/2026/)
-
-#### Capital Income Tax
-
-- [ ] **Capital gains / investment income flat tax: 22%** — Applies to dividends, capital gains on securities, and real-estate gains. Not applicable to salary-only calculator in v1 — [source](https://taxsummaries.pwc.com/iceland/individual/taxes-on-personal-income)
-- [ ] **Annual capital income tax-free allowance: 300.000 kr.** — Per-person exemption on interest and income from listed shareholdings — [source](https://www.skatturinn.is/english/individuals/allowances-deductions-and-credits/)
 
 #### Family & Household
 
@@ -44,13 +36,8 @@ with sources so the team can decide which items to prioritize for future release
 
 #### Deductions
 
-- [ ] **Trade union fees (~1% of gross)** — Employer deducts mandatory and voluntary union fees from salary. Tax deductibility status requires verification with Skatturinn — [source](https://work.iceland.is/working/tax-regulations/)
-- [ ] **Commuting cost deduction (ferðakostnaður)** — Iceland moved to a km-based road usage charge (kílómetragjald) from 1 Jan 2026; deductibility of employment-related commuting costs needs direct confirmation from Skatturinn — [source](https://island.is/en/taxes-individuals)
+- [ ] **Trade union fees (~1% of gross)** — Employer deducts mandatory and voluntary union fees from salary. Varies Tax deductibility status requires verification with Skatturinn — [source](https://work.iceland.is/working/tax-regulations/)
 
-#### Special Taxpayer Groups (out of scope v1)
-
-- [ ] **Limited tax liability (takmörkuð skattskylda)** — Special rules for non-residents / short-stay workers. Out of scope v1 — [source](https://www.skatturinn.is/einstaklingar/stadgreidsla/)
-- [ ] **Seafarer rules** — Special income-tax treatment for seafarers. Out of scope v1 — [source](https://www.skatturinn.is/einstaklingar/stadgreidsla/)
 
 ---
 
