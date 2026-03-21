@@ -1,4 +1,4 @@
-# launareiknir
+# Launareiknir
 
 Static website for visualizing monthly salary, withholding tax, and pension savings in Iceland.
 
@@ -13,6 +13,15 @@ The goal of the project is to provide a simple, transparent salary calculator fo
 ## Live Site
 
 [https://shakypizza.github.io/launareiknir/](https://shakypizza.github.io/launareiknir/)
+
+## Sources
+
+The calculator currently uses these official Skatturinn sources for its 2026 assumptions:
+
+- [Staðgreiðsla 2026](https://www.skatturinn.is/einstaklingar/stadgreidsla/stadgreidsla/2026)
+- [Persónuafsláttur](https://www.skatturinn.is/einstaklingar/stadgreidsla/personuafslattur/)
+- [Iðgjald í lífeyrissjóði](https://www.skatturinn.is/einstaklingar/tekjur-og-fradraettir/idgjald-i-lifeyrissjodi/)
+- [Helstu tölur og prósentur 2026](https://www.skatturinn.is/einstaklingar/helstutolur/2026/)
 
 ## Build And Test
 
