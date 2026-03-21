@@ -70,6 +70,8 @@
 .calculator__inputs {
   display:        flex;
   flex-direction: column;
+  position:       sticky;
+  top:            var(--space-6);
 }
 
 .inputs-fields {
