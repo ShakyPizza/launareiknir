@@ -105,11 +105,9 @@ export function renderVisualization(result) {
   /* Proportion labels */
   labelsEl.innerHTML = segments.map((seg) => `
     <div class="viz-label viz-label--${seg.key}">
-      <span class="viz-label__head">
-        <i class="viz-label__swatch" aria-hidden="true"></i>
-        <span class="viz-label__pct">${formatPct(seg.share)}</span>
-      </span>
+      <i class="viz-label__swatch" aria-hidden="true"></i>
       <span class="viz-label__name">${seg.label}</span>
+      <span class="viz-label__value">${formatPct(seg.share)}</span>
     </div>`).join('\n');
 }
 
