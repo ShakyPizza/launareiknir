@@ -9,6 +9,8 @@ import {
   TAX_BRACKETS_2026,
   PERSONAL_ALLOWANCE_MONTHLY_2026,
   PENSION_FUND_RATE,
+  EMPLOYER_PENSION_RATE,
+  EMPLOYER_SEREIGN_MATCH_RATE,
   MAX_GROSS_SALARY,
 } from './tax-tables.js';
 
@@ -81,6 +83,9 @@ function applyBrackets(taxableMonthly) {
  * @property {number} additionalPensionShare    — additional pension / gross (0–1)
  * @property {number} unionFeeShare             — union fee / gross (0–1)
  * @property {Array}  bracketBreakdown          — per-bracket detail
+ * @property {number} employerPensionAmount     — employer mandatory pension (11.5% of gross)
+ * @property {number} employerSereignMatch      — employer séreign match (2% of gross, only if employee séreign > 0)
+ * @property {number} totalEmployerCost         — gross + employerPensionAmount + employerSereignMatch
  */
 export function calculate({
   grossMonthly,
@@ -115,6 +120,12 @@ export function calculate({
   const clampedUnionFee = Math.max(0, Math.round(gross * (unionFeePct / 100)));
   const netSalary       = gross - totalPensionAmount - taxAfterAllowance - clampedUnionFee;
 
+  const employerPensionAmount = Math.round(gross * EMPLOYER_PENSION_RATE);
+  const employerSereignMatch  = additionalPensionPct > 0
+    ? Math.round(gross * EMPLOYER_SEREIGN_MATCH_RATE)
+    : 0;
+  const totalEmployerCost     = gross + employerPensionAmount + employerSereignMatch;
+
   const pct = (n) => gross === 0 ? 0 : n / gross;
 
   return {
@@ -135,6 +146,9 @@ export function calculate({
     additionalPensionShare:  pct(additionalPensionAmount),
     unionFeeShare:           pct(clampedUnionFee),
     bracketBreakdown,
+    employerPensionAmount,
+    employerSereignMatch,
+    totalEmployerCost,
   };
 }
 

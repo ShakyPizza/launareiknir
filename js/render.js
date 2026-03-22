@@ -216,6 +216,52 @@ export function renderBreakdown(result) {
 }
 
 /**
+ * Render the employer cost breakdown table.
+ *
+ * @param {import('./calculator.js').CalculationResult} result
+ */
+export function renderEmployerBreakdown(result) {
+  const container = document.getElementById('employer-breakdown');
+  if (!container) return;
+
+  if (result.grossSalary === 0) {
+    container.innerHTML = '';
+    return;
+  }
+
+  const row = (term, value) => `
+    <div class="breakdown__row">
+      <dt class="breakdown__term">${term}</dt>
+      <dd class="breakdown__value">${formatISK(value)}</dd>
+    </div>`;
+
+  const groupHeader = (title) => `
+    <div class="breakdown__group-header">${title}</div>`;
+
+  let html = '';
+
+  /* ── Group: Kostnaður launagreiðanda ── */
+  html += `<div class="breakdown__group">`;
+  html += groupHeader('Kostnaður launagreiðanda');
+  html += row('Brúttólaun', result.grossSalary);
+  html += row('Lífeyrissjóður launagreiðanda (11,5%)', result.employerPensionAmount);
+  if (result.employerSereignMatch > 0) {
+    html += row('Séreign — viðbót launagreiðanda (2%)', result.employerSereignMatch);
+  }
+  html += `</div>`;
+
+  /* ── Total ── */
+  html += `<div class="breakdown__group">`;
+  html += `<div class="breakdown__row breakdown__row--total">
+    <dt class="breakdown__term">Heildarkostnaður</dt>
+    <dd class="breakdown__value">${formatISK(result.totalEmployerCost)}</dd>
+  </div>`;
+  html += `</div>`;
+
+  container.innerHTML = html;
+}
+
+/**
  * Render the bottom XY line chart.
  * X axis: gross salary 0–5M kr. Y axis: share of gross 0–100%.
  * Net% line falls and tax% line rises as gross increases — the key story.

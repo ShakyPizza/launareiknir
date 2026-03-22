@@ -7,7 +7,11 @@
  */
 
 import { calculate, clampSalary, buildCurveData } from './calculator.js';
-import { renderHero, renderVisualization, renderBreakdown, renderBottomGraph } from './render.js';
+import { renderHero, renderVisualization, renderBreakdown, renderEmployerBreakdown, renderBottomGraph } from './render.js';
+
+/* ── Tab state ─────────────────────────────────────── */
+
+let activeTab = 'employee';
 
 /* ── Default state ─────────────────────────────────── */
 
@@ -33,6 +37,9 @@ const elAdditionalBadge      = document.getElementById('additional-pension-badge
 const elStepBtns             = /** @type {NodeListOf<HTMLButtonElement>} */ (
   document.querySelectorAll('.step-slider__btn')
 );
+const elTabBtns              = /** @type {NodeListOf<HTMLButtonElement>} */ (
+  document.querySelectorAll('.tab-nav__btn')
+);
 
 /* ── Helpers ───────────────────────────────────────── */
 
@@ -48,6 +55,20 @@ function syncSalary(value) {
   elSalaryRange.value    = String(clamped);
   elSalaryNumber.value   = String(clamped);
   if (elSalaryBadge) elSalaryBadge.textContent = formatBadge(clamped);
+}
+
+/** Activate a tab panel and update aria-selected on tab buttons. */
+function switchTab(tabId) {
+  activeTab = tabId;
+  elTabBtns.forEach((btn) => {
+    const isActive = btn.dataset.tab === tabId;
+    btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    btn.classList.toggle('tab-nav__btn--active', isActive);
+  });
+  const employeePanel = document.getElementById('breakdown-container');
+  const employerPanel = document.getElementById('employer-breakdown');
+  if (employeePanel) employeePanel.hidden = (tabId !== 'employee');
+  if (employerPanel) employerPanel.hidden = (tabId !== 'employer');
 }
 
 /** Sync step-slider button pressed states. */
@@ -67,6 +88,7 @@ function render() {
   renderHero(result);
   renderVisualization(result);
   renderBreakdown(result);
+  renderEmployerBreakdown(result);
   renderBottomGraph(result, curve);
 }
 
@@ -113,8 +135,16 @@ elStepBtns.forEach((btn) => {
   });
 });
 
+elTabBtns.forEach((btn) => {
+  btn.addEventListener('click', () => {
+    const tabId = btn.dataset.tab;
+    if (tabId) switchTab(tabId);
+  });
+});
+
 /* ── Initial render ────────────────────────────────── */
 
 syncSalary(state.grossMonthly);
 syncStepBtns(state.additionalPensionPct);
+switchTab(activeTab);
 render();

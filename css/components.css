@@ -467,3 +467,67 @@
   padding:        var(--space-1) var(--space-3);
   align-self:     center;
 }
+
+/* -----------------------------------------------
+   Tab navigation (Starfsmaður / Launagreiðandi)
+----------------------------------------------- */
+.tab-nav {
+  display:       flex;
+  border-bottom: var(--border);
+  margin-bottom: var(--space-4);
+}
+
+.tab-nav__btn {
+  position:       relative;
+  padding:        var(--space-3) var(--space-4);
+  font-family:    var(--font-primary);
+  font-size:      var(--text-sm);
+  font-weight:    var(--weight-medium);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color:          var(--color-text-muted);
+  background:     transparent;
+  border:         none;
+  border-radius:  var(--radius-none);
+  cursor:         pointer;
+}
+
+.tab-nav__btn::after {
+  content:    '';
+  position:   absolute;
+  bottom:     -1px;
+  left:       0;
+  right:      0;
+  height:     2px;
+  background: transparent;
+}
+
+.tab-nav__btn--active {
+  color: var(--color-text-heading);
+}
+
+.tab-nav__btn--active::after {
+  background: var(--color-accent);
+}
+
+.tab-nav__btn:hover {
+  color: var(--color-text-body);
+}
+
+.tab-nav__btn:focus-visible {
+  outline:    none;
+  box-shadow: var(--shadow-focus);
+}
+
+/* -----------------------------------------------
+   Dev banner
+----------------------------------------------- */
+.dev-banner {
+  width:          100%;
+  padding:        var(--space-2) var(--space-6);
+  background:     var(--color-banner-bg);
+  color:          var(--color-banner-text);
+  font-size:      var(--text-sm);
+  text-align:     center;
+  letter-spacing: 0.01em;
+}

@@ -20,6 +20,11 @@
 </head>
 <body class="page">
 
+  <!-- ── DEV BANNER ──────────────────────────────────── -->
+  <div class="dev-banner" role="status">
+    Vefurinn er enn í þróun og ekki allar forsendur komnar inn
+  </div>
+
   <!-- ── HEADER ───────────────────────────────────────── -->
   <header class="site-header">
     <div class="container">
@@ -191,8 +196,31 @@
             <div class="bottom-graph__legend" id="bottom-graph-legend" aria-hidden="true"></div>
           </section>
 
-          <!-- Financial breakdown table -->
-          <dl class="breakdown" id="breakdown-container">
+          <!-- Tab navigation -->
+          <div class="tab-nav" role="tablist" aria-label="Úttaksyfirlit">
+            <button
+              class="tab-nav__btn tab-nav__btn--active"
+              role="tab"
+              aria-selected="true"
+              data-tab="employee"
+              type="button"
+            >Starfsmaður</button>
+            <button
+              class="tab-nav__btn"
+              role="tab"
+              aria-selected="false"
+              data-tab="employer"
+              type="button"
+            >Launagreiðandi</button>
+          </div>
+
+          <!-- Employee breakdown (default visible) -->
+          <dl class="breakdown" id="breakdown-container" role="tabpanel">
+            <!-- Populated by render.js -->
+          </dl>
+
+          <!-- Employer cost breakdown (default hidden) -->
+          <dl class="breakdown" id="employer-breakdown" role="tabpanel" hidden>
             <!-- Populated by render.js -->
           </dl>
 

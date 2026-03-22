@@ -55,6 +55,26 @@ export const PERSONAL_ALLOWANCE_MONTHLY_2026 = 72_492;
 export const PENSION_FUND_RATE = 0.04;
 
 /**
+ * Employer mandatory pension contribution rate (lífeyrissjóður launagreiðanda).
+ * Paid on top of gross salary; does not reduce employee taxable income.
+ *
+ * Source: skatturinn.is/einstaklingar/tekjur-og-fradraettir/idgjald-i-lifeyrissjodi/
+ *
+ * @type {number}
+ */
+export const EMPLOYER_PENSION_RATE = 0.115;
+
+/**
+ * Employer séreign match rate (viðbót launagreiðanda í séreign).
+ * Only applies when the employee contributes any séreign (additionalPensionPct > 0).
+ *
+ * Source: lifeyrismal.is/en/qa/additional-pension-savings
+ *
+ * @type {number}
+ */
+export const EMPLOYER_SEREIGN_MATCH_RATE = 0.02;
+
+/**
  * Maximum gross salary accepted by the calculator (in ISK).
  * Beyond this, results become less meaningful for a simple tool.
  *

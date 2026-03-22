@@ -17,6 +17,8 @@
   --color-text-heading:    #1A1816;
   --color-accent:          #8B4A3C;
   --color-accent-light:    #C4856A;
+  --color-banner-bg:       #FAE4D0;   /* soft orange — dev/preview banner */
+  --color-banner-text:     #7A3820;   /* dark sienna — readable on banner bg */
 
   /* -----------------------------------------------
      COLORS — Semantic / Data
