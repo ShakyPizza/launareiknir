@@ -392,8 +392,7 @@
    Source panel (footer)
 ----------------------------------------------- */
 .source-panel {
-  border-top: var(--border);
-  padding:    var(--space-4) 0 0;
+  padding: var(--space-4) 0 0;
 }
 
 .source-panel__summary {
