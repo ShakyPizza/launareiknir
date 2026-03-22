@@ -129,6 +129,11 @@
   color: var(--color-text-body);
 }
 
+.bottom-graph__item:last-child .bottom-graph__label,
+.bottom-graph__item:last-child .bottom-graph__value {
+  font-weight: var(--weight-medium);
+}
+
 .bottom-graph__value {
   font-size: var(--text-sm);
   color: var(--color-text-muted);
