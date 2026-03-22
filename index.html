@@ -72,7 +72,7 @@
                     id="input-gross"
                     name="gross"
                     min="0"
-                    max="5000000"
+                    max="10000000"
                     step="1000"
                     value="850000"
                     inputmode="numeric"
@@ -98,6 +98,16 @@
                   <span class="toggle__track" aria-hidden="true"></span>
                   <span class="toggle__text">Persónuafsláttur</span>
                 </label>
+                <label class="toggle" for="toggle-spouse-allowance">
+                  <input
+                    class="toggle__input"
+                    type="checkbox"
+                    id="toggle-spouse-allowance"
+                    name="useSpouseAllowance"
+                  >
+                  <span class="toggle__track" aria-hidden="true"></span>
+                  <span class="toggle__text">Persónuafsláttur maka</span>
+                </label>
                 <label class="toggle" for="toggle-pension">
                   <input
                     class="toggle__input"
@@ -108,16 +118,6 @@
                   >
                   <span class="toggle__track" aria-hidden="true"></span>
                   <span class="toggle__text">Lífeyrissjóður (4%)</span>
-                </label>
-                <label class="toggle" for="toggle-spouse-allowance">
-                  <input
-                    class="toggle__input"
-                    type="checkbox"
-                    id="toggle-spouse-allowance"
-                    name="useSpouseAllowance"
-                  >
-                  <span class="toggle__track" aria-hidden="true"></span>
-                  <span class="toggle__text">Persónuafsláttur maka</span>
                 </label>
               </div>
             </div>
