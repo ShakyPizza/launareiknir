@@ -31,6 +31,8 @@
   --color-social-light:    #3060C0;
   --color-deduction:       #7A6510;  /* vivid amber-gold ~50° */
   --color-deduction-light: #B09020;
+  --color-union:           #5C2878;  /* vivid plum ~285° — union fee segment */
+  --color-union-light:     #8A48A8;
   --color-net:             #1A1816;
 
   /* -----------------------------------------------

@@ -74,6 +74,12 @@ export function renderVisualization(result) {
       share: result.additionalPensionShare,
       color: cssVar('--color-deduction'),
     },
+    {
+      key:   'union',
+      label: 'Iðgjald stéttarfélags',
+      share: result.unionFeeShare,
+      color: cssVar('--color-union'),
+    },
   ].filter((s) => s.share > 0);
 
   /* SVG bar */
@@ -244,6 +250,7 @@ export function renderBottomGraph(result, curve) {
   const colorTax        = cssVar('--color-tax');
   const colorPension    = cssVar('--color-social');
   const colorAdditional = cssVar('--color-deduction');
+  const colorUnion      = cssVar('--color-union');
   const colorTotal      = cssVar('--color-text-muted');
   const colorRule       = cssVar('--color-rule');
   const colorMuted      = cssVar('--color-text-muted');
@@ -251,8 +258,9 @@ export function renderBottomGraph(result, curve) {
 
   const hasPension    = result.pensionFundAmount > 0;
   const hasAdditional = result.additionalPensionAmount > 0;
+  const hasUnion      = result.unionFeeAmount > 0;
 
-  const totalShare = result.netShare + result.pensionShare + result.additionalPensionShare;
+  const totalShare = result.netShare + result.pensionShare + result.additionalPensionShare + result.unionFeeShare;
 
   /* ── Y axis: 0–100% share of gross ──────────── */
   const yTicks = [0, 0.25, 0.5, 0.75, 1.0];
@@ -284,7 +292,8 @@ export function renderBottomGraph(result, curve) {
   const taxPoints        = pts((p) => p.tax);
   const pensionPoints    = pts((p) => p.pension);
   const additionalPoints = pts((p) => p.additionalPension);
-  const totalPoints      = pts((p) => p.net + p.pension + p.additionalPension);
+  const unionPoints      = pts((p) => p.unionFee);
+  const totalPoints      = pts((p) => p.net + p.pension + p.additionalPension + p.unionFee);
 
   /* ── Current salary marker (vertical rule) ───── */
   const mx = toX(result.grossSalary).toFixed(1);
@@ -296,8 +305,9 @@ export function renderBottomGraph(result, curve) {
       <line x1="${mx}" y1="${MT}" x2="${mx}" y2="${MT + CH}" stroke="${colorAccent}" stroke-width="1" stroke-dasharray="4,3"/>
       ${dot(result.netShare, colorNet)}
       ${dot(result.taxShare, colorTax)}
-      ${hasPension    ? dot(result.pensionShare, colorPension)       : ''}
+      ${hasPension    ? dot(result.pensionShare, colorPension)             : ''}
       ${hasAdditional ? dot(result.additionalPensionShare, colorAdditional) : ''}
+      ${hasUnion      ? dot(result.unionFeeShare, colorUnion)              : ''}
       ${dot(totalShare, colorTotal)}`;
 
   /* ── Assemble SVG ────────────────────────────── */
@@ -314,6 +324,7 @@ export function renderBottomGraph(result, curve) {
       <line x1="${ML}" y1="${MT + CH}" x2="${ML + CW}" y2="${MT + CH}" stroke="${colorRule}" stroke-width="1"/>
       ${hasPension    ? `<polyline points="${pensionPoints}"    fill="none" stroke="${colorPension}"    stroke-width="1.5" stroke-linejoin="round"/>` : ''}
       ${hasAdditional ? `<polyline points="${additionalPoints}" fill="none" stroke="${colorAdditional}" stroke-width="1.5" stroke-linejoin="round"/>` : ''}
+      ${hasUnion      ? `<polyline points="${unionPoints}"      fill="none" stroke="${colorUnion}"      stroke-width="1.5" stroke-linejoin="round"/>` : ''}
       <polyline points="${taxPoints}"   fill="none" stroke="${colorTax}"   stroke-width="1.5" stroke-linejoin="round"/>
       <polyline points="${netPoints}"   fill="none" stroke="${colorNet}"   stroke-width="1.5" stroke-linejoin="round"/>
       <polyline points="${totalPoints}" fill="none" stroke="${colorTotal}" stroke-width="1"   stroke-linejoin="round" stroke-dasharray="5,3"/>
@@ -331,8 +342,9 @@ export function renderBottomGraph(result, curve) {
   legendEl.innerHTML = [
     legendItem(colorNet,   'Nettólaun',              formatPct(result.netShare)),
     legendItem(colorTax,   'Staðgreiðsla',           formatPct(result.taxShare)),
-    hasPension    ? legendItem(colorPension,    'Lífeyrissjóður', formatPct(result.pensionShare))         : '',
-    hasAdditional ? legendItem(colorAdditional, 'Séreign',        formatPct(result.additionalPensionShare)) : '',
+    hasPension    ? legendItem(colorPension,    'Lífeyrissjóður',        formatPct(result.pensionShare))           : '',
+    hasAdditional ? legendItem(colorAdditional, 'Séreign',               formatPct(result.additionalPensionShare)) : '',
+    hasUnion      ? legendItem(colorUnion,      'Iðgjald stéttarfélags', formatPct(result.unionFeeShare))          : '',
     legendItem(colorTotal, 'Nettólaun og sjóðir samtals', formatPct(totalShare)),
   ].join('');
 }

@@ -59,7 +59,7 @@ function applyBrackets(taxableMonthly) {
  * @param {boolean} params.useSpouseAllowance   — apply transferred persónuafsláttur maka
  * @param {boolean} params.usePensionFund       — deduct 4% lífeyrissjóður
  * @param {number} params.additionalPensionPct  — additional pension (séreign) 0–4
- * @param {number} params.unionFeeAmount        — monthly union fee in ISK (deducted from net after tax)
+ * @param {number} params.unionFeePct           — union fee as % of gross (deducted from net after tax)
  *
  * @returns {CalculationResult}
  *
@@ -79,6 +79,7 @@ function applyBrackets(taxableMonthly) {
  * @property {number} taxShare                  — tax / gross (0–1)
  * @property {number} pensionShare              — mandatory pension / gross (0–1)
  * @property {number} additionalPensionShare    — additional pension / gross (0–1)
+ * @property {number} unionFeeShare             — union fee / gross (0–1)
  * @property {Array}  bracketBreakdown          — per-bracket detail
  */
 export function calculate({
@@ -87,7 +88,7 @@ export function calculate({
   useSpouseAllowance = false,
   usePensionFund = true,
   additionalPensionPct = 2,
-  unionFeeAmount = 0,
+  unionFeePct = 0,
 }) {
   const gross = clampSalary(grossMonthly);
 
@@ -111,7 +112,7 @@ export function calculate({
 
   const taxAfterAllowance = Math.max(remainingTax - spouseAllowanceUsed, 0);
 
-  const clampedUnionFee = Math.max(0, Math.round(unionFeeAmount));
+  const clampedUnionFee = Math.max(0, Math.round(gross * (unionFeePct / 100)));
   const netSalary       = gross - totalPensionAmount - taxAfterAllowance - clampedUnionFee;
 
   const pct = (n) => gross === 0 ? 0 : n / gross;
@@ -132,6 +133,7 @@ export function calculate({
     taxShare:                pct(taxAfterAllowance),
     pensionShare:            pct(pensionFundAmount),
     additionalPensionShare:  pct(additionalPensionAmount),
+    unionFeeShare:           pct(clampedUnionFee),
     bracketBreakdown,
   };
 }
@@ -158,6 +160,7 @@ export function buildCurveData(params, steps = 100) {
       tax:               r.taxAfterAllowance,
       pension:           r.pensionFundAmount,
       additionalPension: r.additionalPensionAmount,
+      unionFee:          r.unionFeeAmount,
     });
   }
   return points;

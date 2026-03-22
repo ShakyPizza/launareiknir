@@ -17,7 +17,7 @@ const state = {
   useSpouseAllowance:   false,
   usePensionFund:       true,
   additionalPensionPct: 2,
-  unionFeeAmount:       0,
+  unionFeePct:          0,
 };
 
 /* ── Element references ────────────────────────────── */
@@ -98,8 +98,8 @@ elToggleSpouseAllowance.addEventListener('change', () => {
 });
 
 elUnionFeeInput.addEventListener('input', () => {
-  const raw = Number(elUnionFeeInput.value);
-  state.unionFeeAmount = Number.isFinite(raw) && raw >= 0 ? Math.round(raw) : 0;
+  const raw = parseFloat(elUnionFeeInput.value);
+  state.unionFeePct = Number.isFinite(raw) && raw >= 0 ? Math.min(raw, 10) : 0;
   render();
 });
 
