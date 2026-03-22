@@ -268,8 +268,9 @@ export function renderEmployerBreakdown(result) {
  *
  * @param {import('./calculator.js').CalculationResult} result — current calculation (for the marker)
  * @param {Array<{ gross: number, net: number, tax: number }>} curve — pre-computed sweep
+ * @param {number} [graphMax=5_000_000] — x-axis upper bound in ISK
  */
-export function renderBottomGraph(result, curve) {
+export function renderBottomGraph(result, curve, graphMax = 5_000_000) {
   const chartEl  = document.getElementById('bottom-graph-chart');
   const legendEl = document.getElementById('bottom-graph-legend');
   if (!chartEl || !legendEl) return;
@@ -285,7 +286,7 @@ export function renderBottomGraph(result, curve) {
   const ML = 44, MR = 12, MT = 12, MB = 26;
   const CW = W - ML - MR;
   const CH = H - MT - MB;
-  const MAX = 5_000_000;
+  const MAX = graphMax;
 
   /* X = gross salary (kr), Y = share of gross (0–1, inverted for SVG) */
   const toX = (gross) => ML + (gross / MAX) * CW;
@@ -318,8 +319,10 @@ export function renderBottomGraph(result, curve) {
       <text x="${ML - 5}" y="${y}" text-anchor="end" dominant-baseline="middle" font-size="9" font-family="Inter,sans-serif" fill="${colorMuted}">${label}</text>`;
   }).join('\n      ');
 
-  /* ── X axis: gross salary 0–5M kr ───────────── */
-  const xTicks = [0, 1_000_000, 2_000_000, 3_000_000, 4_000_000, 5_000_000];
+  /* ── X axis: gross salary ────────────────────── */
+  const xTicks = graphMax > 5_000_000
+    ? [0, 2_000_000, 4_000_000, 6_000_000, 8_000_000, 10_000_000]
+    : [0, 1_000_000, 2_000_000, 3_000_000, 4_000_000, 5_000_000];
   const xGrid  = xTicks.map((v) => {
     const x     = toX(v);
     const label = v === 0 ? '0' : `${v / 1_000_000}M`;

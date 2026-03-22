@@ -83,13 +83,14 @@ function syncStepBtns(selectedValue) {
 /* ── Render pipeline ───────────────────────────────── */
 
 function render() {
-  const result = calculate(state);
-  const curve  = buildCurveData(state);
+  const result   = calculate(state);
+  const curve    = buildCurveData(state);
+  const graphMax = state.grossMonthly > 5_000_000 ? 10_000_000 : 5_000_000;
   renderHero(result);
   renderVisualization(result);
   renderBreakdown(result);
   renderEmployerBreakdown(result);
-  renderBottomGraph(result, curve);
+  renderBottomGraph(result, curve, graphMax);
 }
 
 /* ── Event listeners ───────────────────────────────── */
