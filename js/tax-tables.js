@@ -80,4 +80,4 @@ export const EMPLOYER_SEREIGN_MATCH_RATE = 0.02;
  *
  * @type {number}
  */
-export const MAX_GROSS_SALARY = 5_000_000;
+export const MAX_GROSS_SALARY = 10_000_000;
