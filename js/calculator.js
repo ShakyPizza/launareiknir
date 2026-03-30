@@ -166,7 +166,7 @@ export function calculate({
 export function buildCurveData(params, steps = 100) {
   const points = [];
   for (let i = 0; i <= steps; i++) {
-    const gross = i === 0 ? 1 : Math.round((i / steps) * MAX_GROSS_SALARY);
+    const gross = Math.round((i / steps) * MAX_GROSS_SALARY);
     const r = calculate({ ...params, grossMonthly: gross });
     points.push({
       gross,

@@ -332,10 +332,15 @@ export function renderBottomGraph(result, curve, graphMax = 5_000_000) {
   }).join('\n      ');
 
   /* ── Polyline helpers ────────────────────────── */
-  const pts = (getter) => curve.map((p) => {
-    const share = getter(p) / p.gross;
-    return `${toX(p.gross).toFixed(1)},${toY(share).toFixed(1)}`;
-  }).join(' ');
+  const pts = (getter) => {
+    const real = curve.filter((p) => p.gross > 0);
+    if (real.length === 0) return '';
+    const startShare = getter(real[0]) / real[0].gross;
+    const anchor = `${toX(0).toFixed(1)},${toY(startShare).toFixed(1)}`;
+    return [anchor, ...real.map((p) =>
+      `${toX(p.gross).toFixed(1)},${toY(getter(p) / p.gross).toFixed(1)}`)
+    ].join(' ');
+  };
 
   const netPoints        = pts((p) => p.net);
   const taxPoints        = pts((p) => p.tax);
