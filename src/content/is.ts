@@ -41,7 +41,7 @@ export const copy = {
   notes: {
     title: "Forsendur 2026",
     scope:
-      "Reiknivélin er ætluð fyrir venjulegan launamann með mánaðarlaun. Hún nær ekki yfir sérreglur eins og fleiri en einn launagreiðanda, persónuafslátt maka, barnaskatt eða sjómannareglur.",
+      "Reiknivélin er ætluð fyrir venjulegan launamann með mánaðarlaun. Hún nær ekki yfir sérreglur eins og fleiri en einn launagreiðanda, eða sjómannareglur.",
     inconsistency:
       "Mánaðartalan fyrir persónuafslátt, 72.492 kr., ræður útreikningi hér. Á Skattinum birtast bæði ársupphæðirnar 869.898 kr. og 869.904 kr. eftir samhengi.",
     linksTitle: "Heimildir hjá Skattinum"
