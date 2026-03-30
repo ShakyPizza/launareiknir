@@ -188,16 +188,6 @@
             <div class="result-hero__share" id="net-salary-share"></div>
           </div>
 
-          <!-- XY line chart -->
-          <section class="bottom-graph" aria-labelledby="bottom-graph-title">
-            <div class="bottom-graph__header">
-              <h2 class="bottom-graph__title" id="bottom-graph-title">Nettólaun og skattur sem fall af brúttólaunum</h2>
-              <p class="bottom-graph__hint">X-ás: brúttólaun (kr.) · Y-ás: hlutfall af brúttólaunum</p>
-            </div>
-            <div class="bottom-graph__chart" id="bottom-graph-chart" aria-hidden="true"></div>
-            <div class="bottom-graph__legend" id="bottom-graph-legend" aria-hidden="true"></div>
-          </section>
-
           <!-- Tab navigation -->
           <div class="tab-nav" role="tablist" aria-label="Úttaksyfirlit">
             <button
@@ -217,19 +207,29 @@
           </div>
 
           <!-- Employee breakdown (default visible) -->
-          <dl class="breakdown" id="breakdown-container" role="tabpanel">
+          <div class="breakdown" id="breakdown-container" role="tabpanel">
             <!-- Populated by render.js -->
-          </dl>
+          </div>
 
           <!-- Employer cost breakdown (default hidden) -->
-          <dl class="breakdown" id="employer-breakdown" role="tabpanel" hidden>
+          <div class="breakdown" id="employer-breakdown" role="tabpanel" hidden>
             <!-- Populated by render.js -->
-          </dl>
-
+          </div>
 
         </section>
 
       </div>
+
+      <!-- XY line chart — full width below two-column grid -->
+      <section class="bottom-graph" aria-labelledby="bottom-graph-title">
+        <div class="bottom-graph__header">
+          <h2 class="bottom-graph__title" id="bottom-graph-title">Nettólaun og skattur sem fall af brúttólaunum</h2>
+          <p class="bottom-graph__hint">X-ás: brúttólaun (kr.) · Y-ás: hlutfall af brúttólaunum</p>
+        </div>
+        <div class="bottom-graph__chart" id="bottom-graph-chart" aria-hidden="true"></div>
+        <div class="bottom-graph__legend" id="bottom-graph-legend" aria-hidden="true"></div>
+      </section>
+
     </div>
   </main>
 

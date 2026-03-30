@@ -313,6 +313,36 @@
   margin-top: 0;
 }
 
+/* Collapsible groups via <details>/<summary> */
+details.breakdown__group {
+  border: none;
+}
+
+summary.breakdown__group-header {
+  cursor:          pointer;
+  list-style:      none;
+  user-select:     none;
+  display:         flex;
+  justify-content: space-between;
+  align-items:     baseline;
+}
+
+summary.breakdown__group-header::-webkit-details-marker {
+  display: none;
+}
+
+summary.breakdown__group-header::after {
+  content:     '−';
+  font-weight: var(--weight-normal);
+  font-size:   var(--text-base);
+  color:       var(--color-accent);
+  flex-shrink: 0;
+}
+
+details.breakdown__group:not([open]) summary.breakdown__group-header::after {
+  content: '+';
+}
+
 .breakdown__group-header {
   font-size:      var(--text-xs);
   font-weight:    var(--weight-semibold);

@@ -73,8 +73,9 @@
    Bottom graph — pay vs tax and deductions
 ----------------------------------------------- */
 .bottom-graph {
-  margin-top:  0;
-  padding-top: 0;
+  margin-top:  var(--space-8);
+  padding-top: var(--space-8);
+  border-top:  var(--border);
 }
 
 .bottom-graph__header {

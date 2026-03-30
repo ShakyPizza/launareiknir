@@ -133,32 +133,34 @@ export function renderBreakdown(result) {
 
   const row = (term, value, modifiers = '') => `
     <div class="breakdown__row ${modifiers}">
-      <dt class="breakdown__term">${term}</dt>
-      <dd class="breakdown__value ${value < 0 ? 'breakdown__value--negative' : ''}">${
+      <span class="breakdown__term">${term}</span>
+      <span class="breakdown__value ${value < 0 ? 'breakdown__value--negative' : ''}">${
         value < 0 ? '−' + formatISK(Math.abs(value)) : formatISK(value)
-      }</dd>
+      }</span>
     </div>`;
 
   const mutedRow = (term, value) => `
     <div class="breakdown__row breakdown__row--sub">
-      <dt class="breakdown__term">${term}</dt>
-      <dd class="breakdown__value breakdown__value--muted">${formatISK(value)}</dd>
+      <span class="breakdown__term">${term}</span>
+      <span class="breakdown__value breakdown__value--muted">${formatISK(value)}</span>
     </div>`;
 
-  const groupHeader = (title) => `
-    <div class="breakdown__group-header">${title}</div>`;
+  const groupOpen = (title) =>
+    `<details class="breakdown__group" open>` +
+    `<summary class="breakdown__group-header">${title}</summary>` +
+    `<div class="breakdown__group-body">`;
+
+  const groupClose = `</div></details>`;
 
   let html = '';
 
   /* ── Group: Laun ── */
-  html += `<div class="breakdown__group">`;
-  html += groupHeader('Laun');
+  html += groupOpen('Laun');
   html += row('Brúttólaun', result.grossSalary);
-  html += `</div>`;
+  html += groupClose;
 
   /* ── Group: Frádráttur ── */
-  html += `<div class="breakdown__group">`;
-  html += groupHeader('Frádráttur');
+  html += groupOpen('Frádráttur');
 
   if (result.pensionFundAmount > 0) {
     html += row('Lífeyrissjóður (4%)', -result.pensionFundAmount);
@@ -168,11 +170,10 @@ export function renderBreakdown(result) {
   }
 
   html += row('Skattstofn', result.taxableBase);
-  html += `</div>`;
+  html += groupClose;
 
   /* ── Group: Staðgreiðsla ── */
-  html += `<div class="breakdown__group">`;
-  html += groupHeader('Staðgreiðsla');
+  html += groupOpen('Staðgreiðsla');
   html += row('Tekjuskattur (fyrir persónuafslátt)', result.taxBeforeAllowance);
 
   if (result.personalAllowanceUsed > 0) {
@@ -194,23 +195,22 @@ export function renderBreakdown(result) {
       );
     });
 
-  html += `</div>`;
+  html += groupClose;
 
   /* ── Group: Aðrar greiðslur ── */
   if (result.unionFeeAmount > 0) {
-    html += `<div class="breakdown__group">`;
-    html += groupHeader('Aðrar greiðslur');
+    html += groupOpen('Aðrar greiðslur');
     html += row('Iðgjald stéttarfélags', -result.unionFeeAmount);
-    html += `</div>`;
+    html += groupClose;
   }
 
   /* ── Total ── */
-  html += `<div class="breakdown__group">`;
-  html += `<div class="breakdown__row breakdown__row--total">
-    <dt class="breakdown__term">Nettólaun</dt>
-    <dd class="breakdown__value">${formatISK(result.netSalary)}</dd>
+  html += `<div class="breakdown__group breakdown__group--total">
+    <div class="breakdown__row breakdown__row--total">
+      <span class="breakdown__term">Nettólaun</span>
+      <span class="breakdown__value">${formatISK(result.netSalary)}</span>
+    </div>
   </div>`;
-  html += `</div>`;
 
   container.innerHTML = html;
 }
@@ -231,32 +231,35 @@ export function renderEmployerBreakdown(result) {
 
   const row = (term, value) => `
     <div class="breakdown__row">
-      <dt class="breakdown__term">${term}</dt>
-      <dd class="breakdown__value">${formatISK(value)}</dd>
+      <span class="breakdown__term">${term}</span>
+      <span class="breakdown__value">${formatISK(value)}</span>
     </div>`;
 
-  const groupHeader = (title) => `
-    <div class="breakdown__group-header">${title}</div>`;
+  const groupOpen = (title) =>
+    `<details class="breakdown__group" open>` +
+    `<summary class="breakdown__group-header">${title}</summary>` +
+    `<div class="breakdown__group-body">`;
+
+  const groupClose = `</div></details>`;
 
   let html = '';
 
   /* ── Group: Kostnaður launagreiðanda ── */
-  html += `<div class="breakdown__group">`;
-  html += groupHeader('Kostnaður launagreiðanda');
+  html += groupOpen('Kostnaður launagreiðanda');
   html += row('Brúttólaun', result.grossSalary);
   html += row('Lífeyrissjóður launagreiðanda (11,5%)', result.employerPensionAmount);
   if (result.employerSereignMatch > 0) {
     html += row('Séreign — viðbót launagreiðanda (2%)', result.employerSereignMatch);
   }
-  html += `</div>`;
+  html += groupClose;
 
   /* ── Total ── */
-  html += `<div class="breakdown__group">`;
-  html += `<div class="breakdown__row breakdown__row--total">
-    <dt class="breakdown__term">Heildarkostnaður</dt>
-    <dd class="breakdown__value">${formatISK(result.totalEmployerCost)}</dd>
+  html += `<div class="breakdown__group breakdown__group--total">
+    <div class="breakdown__row breakdown__row--total">
+      <span class="breakdown__term">Heildarkostnaður</span>
+      <span class="breakdown__value">${formatISK(result.totalEmployerCost)}</span>
+    </div>
   </div>`;
-  html += `</div>`;
 
   container.innerHTML = html;
 }
@@ -282,7 +285,7 @@ export function renderBottomGraph(result, curve, graphMax = 5_000_000) {
   }
 
   /* ── Layout constants ────────────────────────── */
-  const W = 560, H = 200;
+  const W = 560, H = 280;
   const ML = 44, MR = 12, MT = 12, MB = 26;
   const CW = W - ML - MR;
   const CH = H - MT - MB;
