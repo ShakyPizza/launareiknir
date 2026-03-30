@@ -102,7 +102,7 @@
   /* -----------------------------------------------
      LAYOUT
   ----------------------------------------------- */
-  --content-max-width:  900px;
+  --content-max-width:  1200px;
   --content-padding-x:  var(--space-6);
   --column-gap:         var(--space-8);
   --section-gap:        var(--space-12);

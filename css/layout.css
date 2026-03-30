@@ -62,7 +62,7 @@
 ----------------------------------------------- */
 .calculator {
   display:   grid;
-  grid-template-columns: var(--input-panel-width) 1fr;
+  grid-template-columns: 1fr 1fr 2fr;
   gap:       var(--column-gap);
   align-items: start;
 }
@@ -77,6 +77,11 @@
 }
 
 .calculator__results {
+  position: sticky;
+  top:       var(--space-6);
+}
+
+.calculator__graph {
   position: sticky;
   top:       var(--space-6);
 }
@@ -119,6 +124,17 @@
 /* -----------------------------------------------
    Responsive — single column on narrow viewports
 ----------------------------------------------- */
+@media (max-width: 900px) {
+  .calculator {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .calculator__graph {
+    grid-column: 1 / -1;
+    position: static;
+  }
+}
+
 @media (max-width: 640px) {
   .calculator {
     grid-template-columns: 1fr;
