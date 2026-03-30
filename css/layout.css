@@ -77,13 +77,16 @@
 }
 
 .calculator__results {
-  position: sticky;
+  position:  sticky;
   top:       var(--space-6);
+  min-width: 0;
 }
 
 .calculator__graph {
   position: sticky;
   top:       var(--space-6);
+  overflow:  hidden;
+  min-width: 0;
 }
 
 /* -----------------------------------------------
