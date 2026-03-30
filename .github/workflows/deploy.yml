@@ -1,0 +1,13 @@
+name: Deploy to traefikvm
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Run deploy script
+        run: sudo /opt/launareiknir/deploy.sh
