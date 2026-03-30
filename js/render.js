@@ -389,19 +389,19 @@ export function renderBottomGraph(result, curve, graphMax = 5_000_000) {
     </svg>`;
 
   /* ── Legend ──────────────────────────────────── */
-  const legendItem = (color, label, value) => `
+  const legendItem = (key, label, value) => `
     <div class="bottom-graph__item">
-      <i class="bottom-graph__swatch" style="background:${color}" aria-hidden="true"></i>
+      <i class="bottom-graph__swatch bottom-graph__swatch--${key}" aria-hidden="true"></i>
       <span class="bottom-graph__label">${label}</span>
       <span class="bottom-graph__value">${value}</span>
     </div>`;
 
   legendEl.innerHTML = [
-    legendItem(colorNet,   'Nettólaun',              formatPct(result.netShare)),
-    legendItem(colorTax,   'Staðgreiðsla',           formatPct(result.taxShare)),
-    hasPension    ? legendItem(colorPension,    'Lífeyrissjóður',        formatPct(result.pensionShare))           : '',
-    hasAdditional ? legendItem(colorAdditional, 'Séreign',               formatPct(result.additionalPensionShare)) : '',
-    hasUnion      ? legendItem(colorUnion,      'Iðgjald stéttarfélags', formatPct(result.unionFeeShare))          : '',
-    legendItem(colorTotal, 'Nettólaun og sjóðir samtals', formatPct(totalShare)),
+    legendItem('net',      'Nettólaun',                   formatPct(result.netShare)),
+    legendItem('tax',      'Staðgreiðsla',                formatPct(result.taxShare)),
+    hasPension    ? legendItem('pension',    'Lífeyrissjóður',        formatPct(result.pensionShare))           : '',
+    hasAdditional ? legendItem('additional', 'Séreign',               formatPct(result.additionalPensionShare)) : '',
+    hasUnion      ? legendItem('union',      'Iðgjald stéttarfélags', formatPct(result.unionFeeShare))          : '',
+    legendItem('total',    'Nettólaun og sjóðir samtals', formatPct(totalShare)),
   ].join('');
 }

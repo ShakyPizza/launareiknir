@@ -125,6 +125,13 @@
   display: inline-block;
 }
 
+.bottom-graph__swatch--net        { background: var(--color-gross); }
+.bottom-graph__swatch--tax        { background: var(--color-tax); }
+.bottom-graph__swatch--pension    { background: var(--color-social); }
+.bottom-graph__swatch--additional { background: var(--color-deduction); }
+.bottom-graph__swatch--union      { background: var(--color-union); }
+.bottom-graph__swatch--total      { background: var(--color-text-muted); }
+
 .bottom-graph__label {
   font-size: var(--text-sm);
   color: var(--color-text-body);
