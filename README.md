@@ -1,6 +1,6 @@
 # Launareiknir
 
-Static website for visualizing monthly salary, withholding tax, and pension savings in Iceland.
+Static small website calculator for visualizing monthly salary, withholding tax, and pension savings in Iceland.
 
 ## About The Repository
 
@@ -12,7 +12,7 @@ The goal of the project is to provide a simple, transparent salary calculator fo
 
 ## Live Site
 
-[https://shakypizza.github.io/launareiknir/](https://shakypizza.github.io/launareiknir/)
+[https://launareiknir.benediktorri.is](https://launareiknir.benediktorri.is)
 
 ## Sources
 
