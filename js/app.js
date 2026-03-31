@@ -88,9 +88,9 @@ function controlId(prefix, name) {
  * Render the full calculator markup into a container root.
  *
  * @param {HTMLElement} root
- * @param {{ prefix: string, graphHint: string }} options
+ * @param {{ prefix: string, graphHint: string, showInputs?: boolean }} options
  */
-function renderCalculatorMarkup(root, { prefix, graphHint }) {
+function renderCalculatorMarkup(root, { prefix, graphHint, showInputs = true }) {
   const salaryRangeId = controlId(prefix, 'salary-range');
   const salaryNumberId = controlId(prefix, 'input-gross');
   const allowanceId = controlId(prefix, 'toggle-allowance');
@@ -99,8 +99,8 @@ function renderCalculatorMarkup(root, { prefix, graphHint }) {
   const additionalPensionId = controlId(prefix, 'input-additional-pension');
   const unionFeeId = controlId(prefix, 'input-union-fee');
 
-  root.innerHTML = `
-    <div class="calculator">
+  const inputsMarkup = showInputs
+    ? `
       <section class="calculator__inputs" aria-label="Inntaksgögn">
         <div class="inputs-fields">
           <div class="field field--salary">
@@ -228,7 +228,12 @@ function renderCalculatorMarkup(root, { prefix, graphHint }) {
             <p class="field__hint">Dregið frá eftir skatt (venjulega 0,5-1% af brúttólaunum)</p>
           </div>
         </div>
-      </section>
+      </section>`
+    : '';
+
+  root.innerHTML = `
+    <div class="calculator${showInputs ? '' : ' calculator--results-only'}">
+      ${inputsMarkup}
 
       <section
         class="calculator__results"
@@ -303,33 +308,43 @@ function getRequired(root, selector) {
  *   prefix: string,
  *   taxProfile: typeof CURRENT_TAX_PROFILE,
  *   comparisonTaxProfile?: typeof CURRENT_TAX_PROFILE | null,
+ *   state?: typeof DEFAULT_STATE,
  *   graphHint: string,
+ *   showInputs?: boolean,
+ *   onRender?: (() => void) | null,
  * }} options
  */
 function createCalculatorController(root, options) {
   renderCalculatorMarkup(root, {
     prefix: options.prefix,
     graphHint: options.graphHint,
+    showInputs: options.showInputs,
   });
 
   let activeTab = 'employee';
-  const state = { ...DEFAULT_STATE };
+  const state = options.state ?? { ...DEFAULT_STATE };
+  const showInputs = options.showInputs !== false;
 
   const elements = {
-    salaryRange: getRequired(root, '[data-role="salary-range"]'),
-    salaryNumber: getRequired(root, '[data-role="salary-number"]'),
-    salaryBadge: getRequired(root, '[data-role="salary-badge"]'),
-    toggleAllowance: getRequired(root, '[data-role="toggle-allowance"]'),
-    toggleSpouseAllowance: getRequired(root, '[data-role="toggle-spouse-allowance"]'),
-    togglePension: getRequired(root, '[data-role="toggle-pension"]'),
-    unionFeeInput: getRequired(root, '[data-role="union-fee-input"]'),
-    additionalPensionRange: getRequired(root, '[data-role="additional-pension-range"]'),
-    additionalBadge: getRequired(root, '[data-role="additional-pension-badge"]'),
     stepButtons: /** @type {NodeListOf<HTMLButtonElement>} */ (root.querySelectorAll('.step-slider__btn')),
     tabButtons: /** @type {NodeListOf<HTMLButtonElement>} */ (root.querySelectorAll('[data-role="tab-btn"]')),
     employeePanel: getRequired(root, '[data-role="breakdown-container"]'),
     employerPanel: getRequired(root, '[data-role="employer-breakdown"]'),
   };
+
+  const inputElements = showInputs
+    ? {
+      salaryRange: getRequired(root, '[data-role="salary-range"]'),
+      salaryNumber: getRequired(root, '[data-role="salary-number"]'),
+      salaryBadge: getRequired(root, '[data-role="salary-badge"]'),
+      toggleAllowance: getRequired(root, '[data-role="toggle-allowance"]'),
+      toggleSpouseAllowance: getRequired(root, '[data-role="toggle-spouse-allowance"]'),
+      togglePension: getRequired(root, '[data-role="toggle-pension"]'),
+      unionFeeInput: getRequired(root, '[data-role="union-fee-input"]'),
+      additionalPensionRange: getRequired(root, '[data-role="additional-pension-range"]'),
+      additionalBadge: getRequired(root, '[data-role="additional-pension-badge"]'),
+    }
+    : null;
 
   /**
    * Sync both salary inputs and badge to a new clamped value.
@@ -337,11 +352,13 @@ function createCalculatorController(root, options) {
    * @param {number} value
    */
   function syncSalary(value) {
+    if (!inputElements) return;
+
     const clamped = clampSalary(value);
     state.grossMonthly = clamped;
-    elements.salaryRange.value = String(clamped);
-    elements.salaryNumber.value = String(clamped);
-    elements.salaryBadge.textContent = formatBadge(clamped);
+    inputElements.salaryRange.value = String(clamped);
+    inputElements.salaryNumber.value = String(clamped);
+    inputElements.salaryBadge.textContent = formatBadge(clamped);
   }
 
   /**
@@ -366,14 +383,16 @@ function createCalculatorController(root, options) {
    * @param {number} selectedValue
    */
   function syncStepButtons(selectedValue) {
+    if (!inputElements) return;
+
     elements.stepButtons.forEach((button) => {
       const isSelected = Number(button.dataset.value) === selectedValue;
       button.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
       button.classList.toggle('step-slider__btn--active', isSelected);
     });
 
-    elements.additionalPensionRange.value = String(selectedValue);
-    elements.additionalBadge.textContent = `${selectedValue}%`;
+    inputElements.additionalPensionRange.value = String(selectedValue);
+    inputElements.additionalBadge.textContent = `${selectedValue}%`;
   }
 
   function render() {
@@ -396,49 +415,55 @@ function createCalculatorController(root, options) {
       comparisonCurve,
       comparisonLabel: options.comparisonTaxProfile?.shortLabel ?? '',
     });
+
+    if (typeof options.onRender === 'function') {
+      options.onRender();
+    }
   }
 
-  elements.salaryRange.addEventListener('input', () => {
-    syncSalary(Number(elements.salaryRange.value));
-    render();
-  });
-
-  elements.salaryNumber.addEventListener('input', () => {
-    syncSalary(Number(elements.salaryNumber.value));
-    render();
-  });
-
-  elements.toggleAllowance.addEventListener('change', () => {
-    state.usePersonalAllowance = elements.toggleAllowance.checked;
-    render();
-  });
-
-  elements.toggleSpouseAllowance.addEventListener('change', () => {
-    state.useSpouseAllowance = elements.toggleSpouseAllowance.checked;
-    render();
-  });
-
-  elements.togglePension.addEventListener('change', () => {
-    state.usePensionFund = elements.togglePension.checked;
-    render();
-  });
-
-  elements.unionFeeInput.addEventListener('input', () => {
-    const raw = parseFloat(elements.unionFeeInput.value);
-    state.unionFeePct = Number.isFinite(raw) && raw >= 0 ? Math.min(raw, 10) : 0;
-    render();
-  });
-
-  elements.stepButtons.forEach((button) => {
-    button.addEventListener('click', () => {
-      const value = Number(button.dataset.value);
-      if (!Number.isInteger(value) || value < 0 || value > 4) return;
-
-      state.additionalPensionPct = value;
-      syncStepButtons(value);
+  if (inputElements) {
+    inputElements.salaryRange.addEventListener('input', () => {
+      syncSalary(Number(inputElements.salaryRange.value));
       render();
     });
-  });
+
+    inputElements.salaryNumber.addEventListener('input', () => {
+      syncSalary(Number(inputElements.salaryNumber.value));
+      render();
+    });
+
+    inputElements.toggleAllowance.addEventListener('change', () => {
+      state.usePersonalAllowance = inputElements.toggleAllowance.checked;
+      render();
+    });
+
+    inputElements.toggleSpouseAllowance.addEventListener('change', () => {
+      state.useSpouseAllowance = inputElements.toggleSpouseAllowance.checked;
+      render();
+    });
+
+    inputElements.togglePension.addEventListener('change', () => {
+      state.usePensionFund = inputElements.togglePension.checked;
+      render();
+    });
+
+    inputElements.unionFeeInput.addEventListener('input', () => {
+      const raw = parseFloat(inputElements.unionFeeInput.value);
+      state.unionFeePct = Number.isFinite(raw) && raw >= 0 ? Math.min(raw, 10) : 0;
+      render();
+    });
+
+    elements.stepButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const value = Number(button.dataset.value);
+        if (!Number.isInteger(value) || value < 0 || value > 4) return;
+
+        state.additionalPensionPct = value;
+        syncStepButtons(value);
+        render();
+      });
+    });
+  }
 
   elements.tabButtons.forEach((button) => {
     button.addEventListener('click', () => {
@@ -449,8 +474,10 @@ function createCalculatorController(root, options) {
     });
   });
 
-  syncSalary(state.grossMonthly);
-  syncStepButtons(state.additionalPensionPct);
+  if (inputElements) {
+    syncSalary(state.grossMonthly);
+    syncStepButtons(state.additionalPensionPct);
+  }
   switchTab(activeTab);
   render();
 
@@ -506,18 +533,27 @@ export function initPage(doc = document) {
   initTheme(doc);
   initProposalToggle(doc);
 
+  const sharedState = { ...DEFAULT_STATE };
+  let proposalController = null;
+
   const currentController = createCalculatorController(currentRoot, {
     prefix: 'current',
+    state: sharedState,
     taxProfile: CURRENT_TAX_PROFILE,
     graphHint: 'X-ás: brúttólaun (kr.) · Y-ás: hlutfall af brúttólaunum',
+    onRender: () => {
+      proposalController?.render();
+    },
   });
 
-  const proposalController = proposalRoot
+  proposalController = proposalRoot
     ? createCalculatorController(proposalRoot, {
       prefix: 'proposal',
+      state: sharedState,
       taxProfile: PROPOSAL_TAX_PROFILE,
       comparisonTaxProfile: CURRENT_TAX_PROFILE,
       graphHint: 'X-ás: brúttólaun (kr.) · Y-ás: hlutfall af brúttólaunum · brotalínur sýna núverandi kerfi',
+      showInputs: false,
     })
     : null;
 

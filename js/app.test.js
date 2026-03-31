@@ -16,6 +16,12 @@ function setupDom() {
             >
               Tillaga Sjálfstæðisflokksins
             </button>
+            <a
+              class="site-header__proposal-link"
+              href="https://xd.is/2026/03/31/storfelldar-skattalaekkanir-i-efnahagstillogum-sjalfstaedisflokksins/"
+            >
+              Heimild tillögu
+            </a>
             <button class="theme-toggle" id="theme-toggle" type="button"></button>
           </div>
         </div>
@@ -59,7 +65,7 @@ describe('live calculator app', () => {
     delete document.documentElement.dataset.theme;
   });
 
-  it('renders both calculators and keeps their state independent', () => {
+  it('reuses the original inputs and updates the proposal calculator from the same state', () => {
     setupDom();
     initPage(document);
 
@@ -75,16 +81,18 @@ describe('live calculator app', () => {
     const initialCurrentNet = currentNet.textContent;
     const initialProposalNet = proposalNet.textContent;
 
-    const proposalSalaryRange = /** @type {HTMLInputElement} */ (
-      getRequired(proposalRoot, '[data-role="salary-range"]')
+    expect(proposalRoot.querySelector('[data-role="salary-range"]')).toBeNull();
+
+    const currentSalaryRange = /** @type {HTMLInputElement} */ (
+      getRequired(currentRoot, '[data-role="salary-range"]')
     );
 
-    proposalSalaryRange.value = '1500000';
-    proposalSalaryRange.dispatchEvent(new Event('input', { bubbles: true }));
+    currentSalaryRange.value = '1500000';
+    currentSalaryRange.dispatchEvent(new Event('input', { bubbles: true }));
 
-    expect(currentNet.textContent).toBe(initialCurrentNet);
+    expect(currentNet.textContent).not.toBe(initialCurrentNet);
     expect(proposalNet.textContent).not.toBe(initialProposalNet);
-    expect(getRequired(proposalRoot, '[data-role="salary-badge"]').textContent).toBe('1.500.000 kr.');
+    expect(getRequired(currentRoot, '[data-role="salary-badge"]').textContent).toBe('1.500.000 kr.');
   });
 
   it('reveals the proposal section and renders current-system comparison traces', () => {
