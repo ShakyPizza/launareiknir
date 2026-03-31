@@ -700,6 +700,18 @@ details.breakdown__group:not([open]) summary.breakdown__group-header::after {
   max-width:      52rem;
 }
 
+.calculator-section__heading-row {
+  display:         flex;
+  align-items:     center;
+  justify-content: flex-start;
+  gap:             var(--space-3);
+  flex-wrap:       wrap;
+}
+
+.calculator-section__heading-row .site-header__proposal-link {
+  margin-top: var(--space-2);
+}
+
 .calculator-section__eyebrow {
   font-size:      var(--text-xs);
   font-weight:    var(--weight-semibold);
@@ -806,5 +818,10 @@ details.breakdown__group:not([open]) summary.breakdown__group-header::after {
     flex:        1 1 100%;
     white-space: normal;
     text-align:  center;
+  }
+
+  .calculator-section__heading-row .site-header__proposal-link {
+    flex: 0 0 auto;
+    margin-top: 0;
   }
 }
