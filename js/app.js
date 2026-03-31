@@ -54,7 +54,7 @@ function applyTheme(theme) {
   if (elThemeToggle) {
     elThemeToggle.setAttribute(
       'aria-label',
-      theme === 'dark' ? 'Skipta yfir í ljóst þema' : 'Skipta yfir í myrkur þema'
+      theme === 'dark' ? 'Skipta yfir í ljóst þema' : 'Skipta yfir í dökkt þema'
     );
   }
 }
