@@ -36,6 +36,16 @@
           <p class="site-header__subtitle">Útgáfa 0.6</p>
         </div>
         <div class="site-header__controls">
+          <label class="toggle site-header__proposal-toggle">
+            <input
+              class="toggle__input"
+              id="proposal-toggle"
+              type="checkbox"
+              aria-controls="proposal-section"
+          >
+            <span class="toggle__track" aria-hidden="true"></span>
+            <span class="toggle__text">Tillaga Sjálfstæðisflokksins</span>
+          </label>
           <a
             class="github-link"
             href="https://github.com/ShakyPizza/launareiknir"
@@ -78,189 +88,39 @@
 
   <!-- ── MAIN ─────────────────────────────────────────── -->
   <main class="site-main">
-    <div class="container">
-      <div class="calculator">
+    <div class="container site-main__stack">
+      <section class="calculator-section" aria-label="Núverandi skattkerfi 2026">
+        <div id="current-calculator-root"></div>
+      </section>
 
-        <!-- INPUT PANEL -->
-        <section class="calculator__inputs" aria-label="Inntaksgögn">
-
-          <div class="inputs-fields">
-
-            <!-- Gross salary -->
-            <div class="field field--salary">
-              <div class="field__header">
-                <label class="field__label" for="input-gross">Brúttólaun á mánuði</label>
-                <span class="field__badge" id="salary-badge">850.000 kr.</span>
-              </div>
-              <input
-                class="salary-slider"
-                type="range"
-                id="salary-range"
-                min="0"
-                max="5000000"
-                step="1000"
-                value="850000"
-                aria-label="Brúttólaun á mánuði (sleðareiknir)"
-              >
-              <div class="field__row">
-                <div class="field__wrapper">
-                  <input
-                    class="field__input"
-                    type="number"
-                    id="input-gross"
-                    name="gross"
-                    min="0"
-                    max="10000000"
-                    step="1000"
-                    value="850000"
-                    inputmode="numeric"
-                    aria-label="Brúttólaun á mánuði (tölur)"
-                  >
-                  <span class="field__suffix" aria-hidden="true">kr.</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Toggles -->
-            <div class="field field--toggles">
-              <span class="field__label">Stillingar</span>
-              <div class="toggle-group">
-                <label class="toggle" for="toggle-allowance">
-                  <input
-                    class="toggle__input"
-                    type="checkbox"
-                    id="toggle-allowance"
-                    name="usePersonalAllowance"
-                    checked
-                  >
-                  <span class="toggle__track" aria-hidden="true"></span>
-                  <span class="toggle__text">Persónuafsláttur</span>
-                </label>
-                <label class="toggle" for="toggle-spouse-allowance">
-                  <input
-                    class="toggle__input"
-                    type="checkbox"
-                    id="toggle-spouse-allowance"
-                    name="useSpouseAllowance"
-                  >
-                  <span class="toggle__track" aria-hidden="true"></span>
-                  <span class="toggle__text">Persónuafsláttur maka</span>
-                </label>
-                <label class="toggle" for="toggle-pension">
-                  <input
-                    class="toggle__input"
-                    type="checkbox"
-                    id="toggle-pension"
-                    name="usePensionFund"
-                    checked
-                  >
-                  <span class="toggle__track" aria-hidden="true"></span>
-                  <span class="toggle__text">Lífeyrissjóður (4%)</span>
-                </label>
-              </div>
-            </div>
-
-            <!-- Additional pension (séreign) -->
-            <div class="field field--additional-pension">
-              <div class="field__header">
-                <label class="field__label" for="input-additional-pension">Séreignarsparnaður</label>
-                <span class="field__badge" id="additional-pension-badge">2%</span>
-              </div>
-              <div class="step-slider" role="group" aria-label="Séreignarhlutfall">
-                <button class="step-slider__btn step-slider__btn--active" data-value="0" type="button" aria-pressed="false">0%</button>
-                <button class="step-slider__btn step-slider__btn--active" data-value="2" type="button" aria-pressed="true">2%</button>
-                <button class="step-slider__btn" data-value="4" type="button" aria-pressed="false">4%</button>
-              </div>
-              <p class="field__hint">Frádráttarbær séreign (0, 2, 4% af brúttólaunum)</p>
-            </div>
-
-            <!-- Union fee -->
-            <div class="field field--union-fee">
-              <div class="field__header">
-                <label class="field__label" for="input-union-fee">Iðgjald stéttarfélags</label>
-              </div>
-              <div class="field__row">
-                <div class="field__wrapper">
-                  <input
-                    class="field__input"
-                    type="number"
-                    id="input-union-fee"
-                    name="unionFee"
-                    min="0"
-                    max="10"
-                    step="0.1"
-                    value="0"
-                    inputmode="decimal"
-                    aria-label="Iðgjald í stéttarfélag sem hlutfall af brúttólaunum"
-                  >
-                  <span class="field__suffix" aria-hidden="true">%</span>
-                </div>
-              </div>
-              <p class="field__hint">Dregið frá eftir skatt (venjulega 0,5-1% af brúttólaunum)</p>
-            </div>
-
-          </div><!-- /.inputs-fields -->
-
-        </section>
-
-        <!-- RESULT PANEL -->
-        <section
-          class="calculator__results"
-          aria-label="Niðurstöður"
-          aria-live="polite"
-          aria-atomic="true"
-        >
-
-          <!-- Net salary hero -->
-          <div class="result-hero">
-            <div class="result-hero__label">Nettólaun á mánuði</div>
-            <div class="result-hero__value" id="net-salary-value">—</div>
-            <div class="result-hero__share" id="net-salary-share"></div>
+      <section
+        class="calculator-section calculator-section--proposal"
+        id="proposal-section"
+        aria-labelledby="proposal-section-title"
+        hidden
+      >
+        <div class="calculator-section__header">
+          <div class="calculator-section__heading-row">
+            <p class="calculator-section__eyebrow">Tillaga Sjálfstæðisflokksins</p>
+            <a
+              class="site-header__proposal-link"
+              href="https://xd.is/2026/03/31/storfelldar-skattalaekkanir-i-efnahagstillogum-sjalfstaedisflokksins/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Heimild tillögu
+            </a>
           </div>
-
-          <!-- Tab navigation -->
-          <div class="tab-nav" role="tablist" aria-label="Úttaksyfirlit">
-            <button
-              class="tab-nav__btn tab-nav__btn--active"
-              role="tab"
-              aria-selected="true"
-              data-tab="employee"
-              type="button"
-            >Starfsmaður</button>
-            <button
-              class="tab-nav__btn"
-              role="tab"
-              aria-selected="false"
-              data-tab="employer"
-              type="button"
-            >Launagreiðandi</button>
-          </div>
-
-          <!-- Employee breakdown (default visible) -->
-          <div class="breakdown" id="breakdown-container" role="tabpanel">
-            <!-- Populated by render.js -->
-          </div>
-
-          <!-- Employer cost breakdown (default hidden) -->
-          <div class="breakdown" id="employer-breakdown" role="tabpanel" hidden>
-            <!-- Populated by render.js -->
-          </div>
-
-        </section>
-
-        <!-- XY line chart — third column, spans 2 units -->
-        <div class="calculator__graph">
-          <section class="bottom-graph" aria-labelledby="bottom-graph-title">
-            <div class="bottom-graph__header">
-              <h2 class="bottom-graph__title" id="bottom-graph-title">Nettólaun og skattur sem fall af brúttólaunum</h2>
-              <p class="bottom-graph__hint">X-ás: brúttólaun (kr.) · Y-ás: hlutfall af brúttólaunum</p>
-            </div>
-            <div class="bottom-graph__chart" id="bottom-graph-chart" aria-hidden="true"></div>
-            <div class="bottom-graph__legend" id="bottom-graph-legend" aria-hidden="true"></div>
-          </section>
+          <h2 class="calculator-section__title" id="proposal-section-title" tabindex="-1">
+            Samanburður við núverandi skattkerfi
+          </h2>
+          <p class="calculator-section__description">
+            Hér er sama reiknivél keyrð með einu 35% skattþrepi og 100.000 kr. persónuafslætti.
+            Brotalínur í grafinu sýna niðurstöðu núverandi kerfis til samanburðar.
+          </p>
         </div>
-
-      </div>
+        <div id="proposal-calculator-root"></div>
+      </section>
     </div>
   </main>
 
@@ -277,10 +137,16 @@
             frádráttarbær á sama hátt.
           </p>
           <p>
+            Tillaga Sjálfstæðisflokksins er hér sýnd til samanburðar með einu
+            35% skattþrepi og 100.000 kr. persónuafslætti á mánuði. Hún er ekki
+            gildandi skattkerfi.
+          </p>
+          <p>
             Athugið: Þessi útreikningur er einungis til viðmiðunar. Nákvæmar tölur
             geta verið mismunandi eftir aðstæðum.
           </p>
           <ul class="source-list">
+            <li><a href="https://www.mbl.is/frettir/innlent/2026/03/31/vilja_eitt_skattthrep_og_haerri_personuafslatt/" target="_blank" rel="noreferrer">Vilja eitt skattþrep og hærri persónuafslátt — mbl.is</a></li>
             <li><a href="https://www.skatturinn.is/einstaklingar/stadgreidsla/stadgreidsla/2026" target="_blank" rel="noreferrer">Staðgreiðsla 2026 — Skatturinn</a></li>
             <li><a href="https://www.skatturinn.is/einstaklingar/helstutolur/2026/" target="_blank" rel="noreferrer">Helstu tölur og prósentur 2026 — Skatturinn</a></li>
             <li><a href="https://www.skatturinn.is/einstaklingar/tekjur-og-fradraettir/idgjald-i-lifeyrissjodi/" target="_blank" rel="noreferrer">Iðgjald í lífeyrissjóði — Skatturinn</a></li>

@@ -1,13 +1,11 @@
 /**
  * calculator.js — Payroll calculation logic.
- * 
  *
  * @module calculator
  */
 
 import {
-  TAX_BRACKETS_2026,
-  PERSONAL_ALLOWANCE_MONTHLY_2026,
+  CURRENT_TAX_PROFILE,
   PENSION_FUND_RATE,
   EMPLOYER_PENSION_RATE,
   EMPLOYER_SEREIGN_MATCH_RATE,
@@ -30,11 +28,12 @@ export function clampSalary(value) {
  * Returns a per-bracket breakdown as well as the total raw tax.
  *
  * @param {number} taxableMonthly — monthly taxable income in ISK
+ * @param {Array<{ label: string, lowerBound: number, upperBound: number|null, rate: number }>} brackets
  * @returns {{ total: number, breakdown: Array<{ label: string, rate: number, taxableAmount: number, taxAmount: number }> }}
  */
-function applyBrackets(taxableMonthly) {
+function applyBrackets(taxableMonthly, brackets) {
   let total = 0;
-  const breakdown = TAX_BRACKETS_2026.map((bracket, index) => {
+  const breakdown = brackets.map((bracket, index) => {
     const lower   = index === 0 ? bracket.lowerBound : bracket.lowerBound - 1;
     const ceiling = bracket.upperBound === null
       ? taxableMonthly
@@ -94,7 +93,7 @@ export function calculate({
   usePensionFund = true,
   additionalPensionPct = 2,
   unionFeePct = 0,
-}) {
+}, taxProfile = CURRENT_TAX_PROFILE) {
   const gross = clampSalary(grossMonthly);
 
   const pensionFundAmount       = usePensionFund ? Math.round(gross * PENSION_FUND_RATE) : 0;
@@ -103,16 +102,19 @@ export function calculate({
 
   const taxableBase = Math.max(gross - totalPensionAmount, 0);
 
-  const { total: taxBeforeAllowance, breakdown: bracketBreakdown } = applyBrackets(taxableBase);
+  const {
+    total: taxBeforeAllowance,
+    breakdown: bracketBreakdown,
+  } = applyBrackets(taxableBase, taxProfile.brackets);
 
   const personalAllowanceUsed = usePersonalAllowance
-    ? Math.min(PERSONAL_ALLOWANCE_MONTHLY_2026, taxBeforeAllowance)
+    ? Math.min(taxProfile.personalAllowanceMonthly, taxBeforeAllowance)
     : 0;
 
   const remainingTax = Math.max(taxBeforeAllowance - personalAllowanceUsed, 0);
 
   const spouseAllowanceUsed = useSpouseAllowance
-    ? Math.min(PERSONAL_ALLOWANCE_MONTHLY_2026, remainingTax)
+    ? Math.min(taxProfile.personalAllowanceMonthly, remainingTax)
     : 0;
 
   const taxAfterAllowance = Math.max(remainingTax - spouseAllowanceUsed, 0);
@@ -163,11 +165,11 @@ export function calculate({
  * @param {number}  [steps=100]
  * @returns {Array<{ gross: number, net: number, tax: number }>}
  */
-export function buildCurveData(params, steps = 100) {
+export function buildCurveData(params, taxProfile = CURRENT_TAX_PROFILE, steps = 100) {
   const points = [];
   for (let i = 0; i <= steps; i++) {
     const gross = Math.round((i / steps) * MAX_GROSS_SALARY);
-    const r = calculate({ ...params, grossMonthly: gross });
+    const r = calculate({ ...params, grossMonthly: gross }, taxProfile);
     points.push({
       gross,
       net:               r.netSalary,
