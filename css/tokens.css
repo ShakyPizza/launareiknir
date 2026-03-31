@@ -36,7 +36,64 @@
   --color-union:           #5C2878;  /* vivid plum ~285° — union fee segment */
   --color-union-light:     #8A48A8;
   --color-net:             #1A1816;
+}
 
+[data-theme="dark"] {
+  --color-bg:              #1C1A18;
+  --color-surface:         #252220;
+  --color-surface-raised:  #2F2C29;
+  --color-rule:            #3D3A36;
+  --color-text-muted:      #7A7672;
+  --color-text-body:       #D8D4CF;
+  --color-text-heading:    #F0EDE8;
+  --color-accent:          #C4705E;
+  --color-accent-light:    #D48A72;
+  --color-banner-bg:       #3A2218;
+  --color-banner-text:     #E8C4A8;
+  --color-gross:           #2A8A56;
+  --color-gross-light:     #3EB878;
+  --color-tax:             #B04022;
+  --color-tax-light:       #D06040;
+  --color-social:          #2850A8;
+  --color-social-light:    #4078D8;
+  --color-deduction:       #9A8018;
+  --color-deduction-light: #C0A030;
+  --color-union:           #7A3898;
+  --color-union-light:     #A060C0;
+  --color-net:             #F0EDE8;
+  --border-heavy:          2px solid var(--color-rule);
+}
+
+/* Honour system preference when no explicit choice is stored */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-bg:              #1C1A18;
+    --color-surface:         #252220;
+    --color-surface-raised:  #2F2C29;
+    --color-rule:            #3D3A36;
+    --color-text-muted:      #7A7672;
+    --color-text-body:       #D8D4CF;
+    --color-text-heading:    #F0EDE8;
+    --color-accent:          #C4705E;
+    --color-accent-light:    #D48A72;
+    --color-banner-bg:       #3A2218;
+    --color-banner-text:     #E8C4A8;
+    --color-gross:           #2A8A56;
+    --color-gross-light:     #3EB878;
+    --color-tax:             #B04022;
+    --color-tax-light:       #D06040;
+    --color-social:          #2850A8;
+    --color-social-light:    #4078D8;
+    --color-deduction:       #9A8018;
+    --color-deduction-light: #C0A030;
+    --color-union:           #7A3898;
+    --color-union-light:     #A060C0;
+    --color-net:             #F0EDE8;
+    --border-heavy:          2px solid var(--color-rule);
+  }
+}
+
+:root {
   /* -----------------------------------------------
      TYPOGRAPHY
   ----------------------------------------------- */

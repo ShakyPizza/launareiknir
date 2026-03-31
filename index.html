@@ -35,7 +35,32 @@
           <h1 class="site-header__title">Launareiknir</h1>
           <p class="site-header__subtitle">Útgáfa 0.6</p>
         </div>
-        <span class="site-header__badge">2026</span>
+        <div class="site-header__controls">
+          <button
+            class="theme-toggle"
+            id="theme-toggle"
+            type="button"
+            aria-label="Skipta yfir í myrkur þema"
+          >
+            <!-- Moon: visible in light mode -->
+            <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 16 16" fill="currentColor" width="14" height="14" aria-hidden="true">
+              <path d="M14.5 9.5a6.5 6.5 0 0 1-9-9 6.5 6.5 0 1 0 9 9z"/>
+            </svg>
+            <!-- Sun: visible in dark mode -->
+            <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 16 16" fill="currentColor" width="14" height="14" aria-hidden="true">
+              <circle cx="8" cy="8" r="3"/>
+              <rect x="7.25" y="0.5" width="1.5" height="2"/>
+              <rect x="7.25" y="13.5" width="1.5" height="2"/>
+              <rect x="0.5" y="7.25" width="2" height="1.5"/>
+              <rect x="13.5" y="7.25" width="2" height="1.5"/>
+              <rect x="3.08" y="2.02" width="1.5" height="2" transform="rotate(45 3.08 2.02)"/>
+              <rect x="11.42" y="2.02" width="1.5" height="2" transform="rotate(-45 11.42 2.02)"/>
+              <rect x="3.08" y="11.98" width="1.5" height="2" transform="rotate(-45 3.08 11.98)"/>
+              <rect x="11.42" y="11.98" width="1.5" height="2" transform="rotate(45 11.42 11.98)"/>
+            </svg>
+          </button>
+          <span class="site-header__badge">2026</span>
+        </div>
       </div>
     </div>
   </header>
