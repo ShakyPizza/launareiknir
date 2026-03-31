@@ -1,6 +1,6 @@
 /**
- * calculator.js — Pure payroll calculation logic.
- * Zero DOM access. Zero side effects. All inputs explicit, all outputs returned.
+ * calculator.js — Payroll calculation logic.
+ * 
  *
  * @module calculator
  */
