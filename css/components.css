@@ -771,6 +771,60 @@ details.breakdown__group:not([open]) summary.breakdown__group-header::after {
   max-width: 64ch;
 }
 
+.seo-intro__content,
+.seo-card {
+  max-width:      64rem;
+  padding:        var(--space-5);
+  background:     var(--color-surface);
+  border:         var(--border);
+}
+
+.seo-intro__content h2,
+.seo-card h2 {
+  margin-bottom:  var(--space-3);
+  font-size:      var(--text-xl);
+}
+
+.seo-intro__content p,
+.seo-card p {
+  color:       var(--color-text-body);
+  max-width:   72ch;
+  line-height: var(--leading-normal);
+}
+
+.seo-intro__content p + p,
+.seo-card p + p {
+  margin-top: var(--space-3);
+}
+
+.seo-content__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.faq-list {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--space-4);
+  margin-top:     var(--space-3);
+}
+
+.faq-item {
+  padding-top: var(--space-4);
+  border-top:  var(--border);
+}
+
+.faq-item:first-child {
+  padding-top: 0;
+  border-top:  none;
+}
+
+.faq-item h3 {
+  margin-bottom: var(--space-2);
+  font-size:     var(--text-md);
+}
+
 /* -----------------------------------------------
    Tab navigation (Starfsmaður / Launagreiðandi)
 ----------------------------------------------- */
@@ -841,6 +895,10 @@ details.breakdown__group:not([open]) summary.breakdown__group-header::after {
 }
 
 @media (max-width: 640px) {
+  .seo-content__grid {
+    grid-template-columns: 1fr;
+  }
+
   .comparison-summary__grid {
     grid-template-columns: 1fr;
   }
