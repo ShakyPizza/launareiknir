@@ -7,15 +7,16 @@ function setupDom() {
         <div class="site-header__inner">
           <div></div>
           <div class="site-header__controls">
-            <button
-              class="site-header__proposal-btn"
-              id="proposal-toggle"
-              type="button"
-              aria-controls="proposal-section"
-              aria-expanded="false"
-            >
-              Tillaga Sjálfstæðisflokksins
-            </button>
+            <label class="toggle site-header__proposal-toggle">
+              <input
+                class="toggle__input"
+                id="proposal-toggle"
+                type="checkbox"
+                aria-controls="proposal-section"
+              />
+              <span class="toggle__track" aria-hidden="true"></span>
+              <span class="toggle__text">Tillaga Sjálfstæðisflokksins</span>
+            </label>
             <a
               class="site-header__proposal-link"
               href="https://xd.is/2026/03/31/storfelldar-skattalaekkanir-i-efnahagstillogum-sjalfstaedisflokksins/"
@@ -99,17 +100,14 @@ describe('live calculator app', () => {
     setupDom();
 
     const proposalSection = /** @type {HTMLElement} */ (document.getElementById('proposal-section'));
-    const proposalButton = /** @type {HTMLButtonElement} */ (document.getElementById('proposal-toggle'));
-
-    proposalSection.scrollIntoView = vi.fn();
+    const proposalToggle = /** @type {HTMLInputElement} */ (document.getElementById('proposal-toggle'));
 
     initPage(document);
 
-    proposalButton.click();
+    proposalToggle.checked = true;
+    proposalToggle.dispatchEvent(new Event('change', { bubbles: true }));
 
     expect(proposalSection.hidden).toBe(false);
-    expect(proposalButton.getAttribute('aria-expanded')).toBe('true');
-    expect(proposalSection.scrollIntoView).toHaveBeenCalled();
 
     const proposalRoot = document.getElementById('proposal-calculator-root');
     if (!proposalRoot) {
@@ -128,5 +126,24 @@ describe('live calculator app', () => {
     expect(comparisonSummary.textContent).toContain('Núverandi kerfi');
     expect(comparisonSummary.textContent).toContain('kr.');
     expect(comparisonSummary.textContent).toContain('% af brúttólaunum');
+  });
+
+  it('hides the proposal section when the header toggle is false and shows it only when true', () => {
+    setupDom();
+    initPage(document);
+
+    const proposalSection = /** @type {HTMLElement} */ (document.getElementById('proposal-section'));
+    const proposalToggle = /** @type {HTMLInputElement} */ (document.getElementById('proposal-toggle'));
+
+    expect(proposalToggle.checked).toBe(false);
+    expect(proposalSection.hidden).toBe(true);
+
+    proposalToggle.checked = true;
+    proposalToggle.dispatchEvent(new Event('input', { bubbles: true }));
+    expect(proposalSection.hidden).toBe(false);
+
+    proposalToggle.checked = false;
+    proposalToggle.dispatchEvent(new Event('input', { bubbles: true }));
+    expect(proposalSection.hidden).toBe(true);
   });
 });

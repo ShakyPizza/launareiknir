@@ -515,32 +515,23 @@ function createCalculatorController(root, options) {
 }
 
 /**
- * Initialize the header CTA that reveals and scrolls to the proposal section.
+ * Initialize the header toggle that reveals or hides the proposal section.
  *
  * @param {Document} doc
  */
 function initProposalToggle(doc) {
-  const proposalButton = /** @type {HTMLButtonElement|null} */ (doc.getElementById('proposal-toggle'));
+  const proposalToggle = /** @type {HTMLInputElement|null} */ (doc.getElementById('proposal-toggle'));
   const proposalSection = /** @type {HTMLElement|null} */ (doc.getElementById('proposal-section'));
 
-  if (!proposalButton || !proposalSection) return;
+  if (!proposalToggle || !proposalSection) return;
 
-  proposalButton.addEventListener('click', () => {
-    if (proposalSection.hidden) {
-      proposalSection.hidden = false;
-    }
+  const syncProposalVisibility = () => {
+    proposalSection.hidden = !proposalToggle.checked;
+  };
 
-    proposalButton.setAttribute('aria-expanded', 'true');
-
-    if (typeof proposalSection.scrollIntoView === 'function') {
-      proposalSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-
-    const focusTarget = proposalSection.querySelector('.calculator-section__title');
-    if (focusTarget instanceof HTMLElement) {
-      focusTarget.focus({ preventScroll: true });
-    }
-  });
+  syncProposalVisibility();
+  proposalToggle.addEventListener('input', syncProposalVisibility);
+  proposalToggle.addEventListener('change', syncProposalVisibility);
 }
 
 /**

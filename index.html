@@ -36,15 +36,16 @@
           <p class="site-header__subtitle">Útgáfa 0.6</p>
         </div>
         <div class="site-header__controls">
-          <button
-            class="site-header__proposal-btn"
-            id="proposal-toggle"
-            type="button"
-            aria-controls="proposal-section"
-            aria-expanded="false"
-          >
-            Tillaga Sjálfstæðisflokksins
-          </button>
+          <label class="toggle site-header__proposal-toggle">
+            <input
+              class="toggle__input"
+              id="proposal-toggle"
+              type="checkbox"
+              aria-controls="proposal-section"
+            >
+            <span class="toggle__track" aria-hidden="true"></span>
+            <span class="toggle__text">Tillaga Sjálfstæðisflokksins</span>
+          </label>
           <a
             class="site-header__proposal-link"
             href="https://xd.is/2026/03/31/storfelldar-skattalaekkanir-i-efnahagstillogum-sjalfstaedisflokksins/"
