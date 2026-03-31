@@ -7,7 +7,7 @@
  */
 
 import { calculate, clampSalary, buildCurveData } from './calculator.js';
-import { renderHero, renderVisualization, renderBreakdown, renderEmployerBreakdown, renderBottomGraph } from './render.js';
+import { renderHero, renderBreakdown, renderEmployerBreakdown, renderBottomGraph } from './render.js';
 
 /* ── Tab state ─────────────────────────────────────── */
 
@@ -87,7 +87,6 @@ function render() {
   const curve    = buildCurveData(state);
   const graphMax = state.grossMonthly > 5_000_000 ? 10_000_000 : 5_000_000;
   renderHero(result);
-  renderVisualization(result);
   renderBreakdown(result);
   renderEmployerBreakdown(result);
   renderBottomGraph(result, curve, graphMax);
