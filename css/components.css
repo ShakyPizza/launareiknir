@@ -494,6 +494,33 @@ details.breakdown__group:not([open]) summary.breakdown__group-header::after {
 }
 
 /* -----------------------------------------------
+   GitHub link
+----------------------------------------------- */
+.github-link {
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  width:           var(--space-8);
+  height:          var(--space-8);
+  background:      transparent;
+  border:          var(--border);
+  border-radius:   var(--radius-none);
+  color:           var(--color-text-muted);
+  text-decoration: none;
+  transition:      color 100ms ease, border-color 100ms ease;
+}
+
+.github-link:hover {
+  color:        var(--color-text-body);
+  border-color: var(--color-text-muted);
+}
+
+.github-link:focus-visible {
+  outline:    none;
+  box-shadow: var(--shadow-focus);
+}
+
+/* -----------------------------------------------
    Theme toggle button
 ----------------------------------------------- */
 .theme-toggle {
