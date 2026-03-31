@@ -82,10 +82,11 @@
 }
 
 .calculator__results {
-  position:  sticky;
-  top:       var(--space-6);
-  min-width: 0;
-  z-index:   2;
+  position:         sticky;
+  top:              var(--space-6);
+  min-width:        0;
+  z-index:          2;
+  background-color: var(--color-bg);
 }
 
 .calculator__graph {
@@ -140,6 +141,12 @@
   }
 
   .calculator__graph {
+    order: 2;
+    position: static;
+  }
+
+  .calculator__results {
+    order: 3;
     grid-column: 1 / -1;
     position: static;
   }
