@@ -76,10 +76,16 @@
   /* Fields maintain their own spacing via .field borders */
 }
 
+.calculator__inputs {
+  position: relative;
+  z-index:  3;
+}
+
 .calculator__results {
   position:  sticky;
   top:       var(--space-6);
   min-width: 0;
+  z-index:   2;
 }
 
 .calculator__graph {
@@ -87,6 +93,7 @@
   top:       var(--space-6);
   overflow:  hidden;
   min-width: 0;
+  z-index:   1;
 }
 
 /* -----------------------------------------------
