@@ -40,6 +40,40 @@ const elStepBtns             = /** @type {NodeListOf<HTMLButtonElement>} */ (
 const elTabBtns              = /** @type {NodeListOf<HTMLButtonElement>} */ (
   document.querySelectorAll('.tab-nav__btn')
 );
+const elThemeToggle          = /** @type {HTMLButtonElement} */ (document.getElementById('theme-toggle'));
+
+/* ── Theme ─────────────────────────────────────────── */
+
+/**
+ * Apply a theme and persist the preference.
+ * @param {'dark'|'light'} theme
+ */
+function applyTheme(theme) {
+  document.documentElement.dataset.theme = theme;
+  localStorage.setItem('theme', theme);
+  if (elThemeToggle) {
+    elThemeToggle.setAttribute(
+      'aria-label',
+      theme === 'dark' ? 'Skipta yfir í ljóst þema' : 'Skipta yfir í dökkt þema'
+    );
+  }
+}
+
+(function initTheme() {
+  const saved = localStorage.getItem('theme');
+  if (saved === 'dark' || saved === 'light') {
+    applyTheme(saved);
+  }
+  // If no saved preference, CSS media query handles the default — no data-theme set.
+})();
+
+if (elThemeToggle) {
+  elThemeToggle.addEventListener('click', () => {
+    const current = document.documentElement.dataset.theme;
+    const next = current === 'dark' ? 'light' : 'dark';
+    applyTheme(next);
+  });
+}
 
 /* ── Helpers ───────────────────────────────────────── */
 
