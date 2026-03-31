@@ -118,6 +118,13 @@
   gap: var(--space-2);
 }
 
+.bottom-graph__legend-divider {
+  grid-column: 1 / -1;
+  height: 1px;
+  background: var(--color-rule);
+  margin: var(--space-1) 0;
+}
+
 .bottom-graph__item--compare .bottom-graph__label,
 .bottom-graph__item--compare .bottom-graph__value {
   color: var(--color-text-muted);

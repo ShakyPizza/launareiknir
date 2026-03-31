@@ -9,6 +9,7 @@ import { calculate, clampSalary, buildCurveData } from './calculator.js';
 import { CURRENT_TAX_PROFILE, PROPOSAL_TAX_PROFILE } from './tax-tables.js';
 import {
   renderHero,
+  renderNetComparison,
   renderBreakdown,
   renderEmployerBreakdown,
   renderBottomGraph,
@@ -279,6 +280,24 @@ function renderCalculatorMarkup(root, { prefix, graphHint, showInputs = true }) 
           <div class="bottom-graph__chart" data-role="bottom-graph-chart" aria-hidden="true"></div>
           <div class="bottom-graph__legend" data-role="bottom-graph-legend" aria-hidden="true"></div>
         </section>
+
+        <div class="comparison-summary" data-role="net-comparison-summary" hidden>
+          <div class="comparison-summary__header">
+            <span class="comparison-summary__eyebrow">Samanburður á nettólaunum</span>
+          </div>
+          <div class="comparison-summary__grid">
+            <div class="comparison-summary__card comparison-summary__card--proposal">
+              <div class="comparison-summary__label" data-role="proposal-net-label"></div>
+              <div class="comparison-summary__amount" data-role="proposal-net-amount"></div>
+              <div class="comparison-summary__share" data-role="proposal-net-share"></div>
+            </div>
+            <div class="comparison-summary__card comparison-summary__card--current">
+              <div class="comparison-summary__label" data-role="comparison-net-label"></div>
+              <div class="comparison-summary__amount" data-role="comparison-net-amount"></div>
+              <div class="comparison-summary__share" data-role="comparison-net-share"></div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   `;
@@ -408,6 +427,12 @@ function createCalculatorController(root, options) {
       : null;
 
     renderHero(root, result);
+    renderNetComparison(
+      root,
+      result,
+      comparisonResult,
+      options.comparisonTaxProfile?.shortLabel ?? 'Núverandi kerfi',
+    );
     renderBreakdown(root, result);
     renderEmployerBreakdown(root, result);
     renderBottomGraph(root, result, curve, graphMax, {

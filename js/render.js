@@ -50,6 +50,33 @@ export function renderHero(root, result) {
 }
 
 /**
+ * Render a proposal-vs-current net salary comparison block.
+ *
+ * @param {HTMLElement} root
+ * @param {import('./calculator.js').CalculationResult} result
+ * @param {import('./calculator.js').CalculationResult|null} comparisonResult
+ * @param {string} [comparisonLabel='Núverandi kerfi']
+ */
+export function renderNetComparison(root, result, comparisonResult, comparisonLabel = 'Núverandi kerfi') {
+  const container = getRole(root, 'net-comparison-summary');
+
+  if (!comparisonResult) {
+    container.hidden = true;
+    return;
+  }
+
+  getRole(root, 'proposal-net-label').textContent = 'Tillaga Sjálfstæðisflokksins';
+  getRole(root, 'proposal-net-amount').textContent = formatISK(result.netSalary);
+  getRole(root, 'proposal-net-share').textContent = `${formatPct(result.netShare)} af brúttólaunum`;
+
+  getRole(root, 'comparison-net-label').textContent = comparisonLabel;
+  getRole(root, 'comparison-net-amount').textContent = formatISK(comparisonResult.netSalary);
+  getRole(root, 'comparison-net-share').textContent = `${formatPct(comparisonResult.netShare)} af brúttólaunum`;
+
+  container.hidden = false;
+}
+
+/**
  * Render the financial breakdown table.
  *
  * @param {HTMLElement} root
@@ -327,7 +354,7 @@ export function renderBottomGraph(root, result, curve, graphMax = 5_000_000, opt
       ${comparisonCurve ? `<polyline class="bottom-graph__polyline bottom-graph__polyline--compare-tax" points="${comparisonTaxPoints}" fill="none" stroke="${colorTax}" stroke-width="1.25" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="5,4" stroke-opacity="0.45"/>` : ''}
       <polyline class="bottom-graph__polyline bottom-graph__polyline--tax" points="${taxPoints}" fill="none" stroke="${colorTax}" stroke-width="1.5" stroke-linejoin="round"/>
       <polyline class="bottom-graph__polyline bottom-graph__polyline--net" points="${netPoints}" fill="none" stroke="${colorNet}" stroke-width="1.5" stroke-linejoin="round"/>
-      <polyline class="bottom-graph__polyline bottom-graph__polyline--total" points="${totalPoints}" fill="none" stroke="${colorTotal}" stroke-width="1" stroke-linejoin="round" stroke-dasharray="5,3"/>
+      <polyline class="bottom-graph__polyline bottom-graph__polyline--total" points="${totalPoints}" fill="none" stroke="${colorTotal}" stroke-width="1" stroke-linejoin="round"/>
       ${marker}
     </svg>`;
 
@@ -338,6 +365,10 @@ export function renderBottomGraph(root, result, curve, graphMax = 5_000_000, opt
       <span class="bottom-graph__value">${value}</span>
     </div>`;
 
+  const comparisonDivider = comparisonResult
+    ? `<div class="bottom-graph__legend-divider" aria-hidden="true"></div>`
+    : '';
+
   legendEl.innerHTML = [
     legendItem('net', 'Nettólaun', formatPct(result.netShare)),
     legendItem('tax', 'Staðgreiðsla', formatPct(result.taxShare)),
@@ -345,6 +376,7 @@ export function renderBottomGraph(root, result, curve, graphMax = 5_000_000, opt
     hasAdditional ? legendItem('additional', 'Séreign', formatPct(result.additionalPensionShare)) : '',
     hasUnion ? legendItem('union', 'Iðgjald stéttarfélags', formatPct(result.unionFeeShare)) : '',
     legendItem('total', 'Nettólaun og sjóðir samtals', formatPct(totalShare)),
+    comparisonDivider,
     comparisonResult
       ? legendItem('compare-net', `Nettólaun — ${comparisonLabel}`, formatPct(comparisonResult.netShare), 'bottom-graph__item--compare')
       : '',

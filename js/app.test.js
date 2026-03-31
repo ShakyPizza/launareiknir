@@ -118,10 +118,15 @@ describe('live calculator app', () => {
 
     const legend = getRequired(proposalRoot, '[data-role="bottom-graph-legend"]');
     const chart = getRequired(proposalRoot, '[data-role="bottom-graph-chart"]');
+    const comparisonSummary = getRequired(proposalRoot, '[data-role="net-comparison-summary"]');
 
     expect(legend.textContent).toContain('Nettólaun — Núverandi kerfi');
     expect(legend.textContent).toContain('Staðgreiðsla — Núverandi kerfi');
     expect(chart.innerHTML).toContain('bottom-graph__polyline--compare-net');
     expect(chart.innerHTML).toContain('bottom-graph__polyline--compare-tax');
+    expect(comparisonSummary.textContent).toContain('Tillaga Sjálfstæðisflokksins');
+    expect(comparisonSummary.textContent).toContain('Núverandi kerfi');
+    expect(comparisonSummary.textContent).toContain('kr.');
+    expect(comparisonSummary.textContent).toContain('% af brúttólaunum');
   });
 });
