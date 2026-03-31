@@ -57,6 +57,23 @@
   padding: var(--space-6) 0;
 }
 
+.site-main__stack {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--space-8);
+}
+
+.calculator-section {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--space-4);
+}
+
+.calculator-section--proposal {
+  padding-top: var(--space-7);
+  border-top:  var(--border-heavy);
+}
+
 /* -----------------------------------------------
    Calculator two-column grid
 ----------------------------------------------- */
