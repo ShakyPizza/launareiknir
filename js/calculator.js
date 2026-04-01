@@ -147,7 +147,7 @@ export function calculate({
 
   const taxAfterAllowance = Math.max(remainingTax - spouseAllowanceUsed, 0);
 
-  const clampedUnionFee = Math.max(0, Math.round(salaryWithVacation * (unionFeePct / 100)));
+  const clampedUnionFee = Math.max(0, Math.round(gross * (unionFeePct / 100)));
   const netSalary       = salaryWithVacation - totalPensionAmount - taxAfterAllowance - clampedUnionFee;
   const roundedNetSalary = Math.round(netSalary);
 
