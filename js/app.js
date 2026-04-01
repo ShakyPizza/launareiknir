@@ -81,6 +81,16 @@ function formatBadge(value) {
 }
 
 /**
+ * Format an integer salary input using Icelandic thousands separators.
+ *
+ * @param {number} value
+ * @returns {string}
+ */
+function formatSalaryInput(value) {
+  return new Intl.NumberFormat('is-IS', { maximumFractionDigits: 0 }).format(value);
+}
+
+/**
  * Build a namespaced id for a calculator control.
  *
  * @param {string} prefix
@@ -132,14 +142,13 @@ function renderCalculatorMarkup(root, { prefix, graphHint, showInputs = true }) 
               <div class="field__wrapper">
                 <input
                   class="field__input"
-                  type="number"
+                  type="text"
                   id="${salaryNumberId}"
                   name="gross"
-                  min="0"
-                  max="10000000"
-                  step="1000"
-                  value="${DEFAULT_STATE.grossMonthly}"
+                  value="${formatSalaryInput(DEFAULT_STATE.grossMonthly)}"
                   inputmode="numeric"
+                  autocomplete="off"
+                  spellcheck="false"
                   aria-label="Brúttólaun á mánuði (tölur)"
                   data-role="salary-number"
                 >
@@ -418,8 +427,19 @@ function createCalculatorController(root, options) {
     const clamped = clampSalary(value);
     state.grossMonthly = clamped;
     inputElements.salaryRange.value = String(clamped);
-    inputElements.salaryNumber.value = String(clamped);
+    inputElements.salaryNumber.value = formatSalaryInput(clamped);
     inputElements.salaryBadge.textContent = formatBadge(clamped);
+  }
+
+  /**
+   * Parse a salary string that may contain Icelandic thousands separators.
+   *
+   * @param {string} value
+   * @returns {number}
+   */
+  function parseSalaryInput(value) {
+    const digitsOnly = value.replace(/[^\d]/g, '');
+    return digitsOnly === '' ? 0 : Number.parseInt(digitsOnly, 10);
   }
 
   /**
@@ -463,7 +483,7 @@ function createCalculatorController(root, options) {
    * @returns {number}
    */
   function parseVacationPercent(value) {
-    const normalized = value.replace(',', '.');
+    const normalized = value.replace(/\s+/g, '').replace(',', '.');
     return clampVacationPercent(Number.parseFloat(normalized));
   }
 
@@ -472,7 +492,9 @@ function createCalculatorController(root, options) {
 
     inputElements.toggleVacationPay.checked = state.payVacationWithSalary;
     inputElements.vacationPercentField.hidden = !state.payVacationWithSalary;
-    inputElements.vacationPercentInput.value = String(state.vacationPercent);
+    if (document.activeElement !== inputElements.vacationPercentInput) {
+      inputElements.vacationPercentInput.value = String(state.vacationPercent);
+    }
   }
 
   function render() {
@@ -515,7 +537,7 @@ function createCalculatorController(root, options) {
     });
 
     inputElements.salaryNumber.addEventListener('input', () => {
-      syncSalary(Number(inputElements.salaryNumber.value));
+      syncSalary(parseSalaryInput(inputElements.salaryNumber.value));
       render();
     });
 

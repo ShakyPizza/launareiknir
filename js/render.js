@@ -276,6 +276,9 @@ export function renderBottomGraph(root, result, curve, graphMax = 5_000_000, opt
   const hasAdditional = result.additionalPensionAmount > 0;
   const hasUnion = result.unionFeeAmount > 0;
   const totalShare = result.totalCompensationShare;
+  const totalLabel = result.vacationPayAmount > 0
+    ? 'Nettólaun, orlofsgreiðslur og sjóðir samtals'
+    : 'Nettólaun og sjóðir samtals';
 
   const shareValues = curve
     .filter((point) => point.gross > 0)
@@ -406,7 +409,7 @@ export function renderBottomGraph(root, result, curve, graphMax = 5_000_000, opt
     hasPension ? legendItem('pension', 'Lífeyrissjóður', formatPct(result.pensionShare)) : '',
     hasAdditional ? legendItem('additional', 'Séreign', formatPct(result.additionalPensionShare)) : '',
     hasUnion ? legendItem('union', 'Iðgjald stéttarfélags', formatPct(result.unionFeeShare)) : '',
-    legendItem('total', 'Nettólaun, orlofsgreiðslur og sjóðir samtals', formatPct(totalShare)),
+    legendItem('total', totalLabel, formatPct(totalShare)),
     comparisonDivider,
     comparisonResult
       ? legendItem('compare-net', `Nettólaun — ${comparisonLabel}`, formatPct(comparisonResult.netShare), 'bottom-graph__item--compare')

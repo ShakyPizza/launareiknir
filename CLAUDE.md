@@ -251,7 +251,7 @@ The formatters use the `is-IS` locale (period = thousands separator).
 | Additional pension (séreign) | **0–4%** of gross (reduces taxable base) |
 | Employer pension contribution | **11,5%** of wage base |
 | Employer séreign match | **2%** when employee pays séreign |
-| Default vacation pay percentage | **10,17%** of entered salary when paid with salary |
+| Default vacation pay percentage | **10,64%** of entered salary when paid with salary |
 
 Sources:
 - [Launaseðillinn — SA](https://www.sa.is/vinnumarkadsvefur/reiknivelar/launasedillinn/)
@@ -305,7 +305,7 @@ Test case: 850.000 kr. gross, personal allowance on, pension on, séreign 2%:
 Check:
 - Tab through all controls — terracotta focus ring appears on every interactive element
 - Toggle pension off — breakdown rows disappear cleanly
-- Toggle `Orlof greitt út með launum` on — `Orlofsprósenta` input appears with `10,17`
+- Toggle `Orlof greitt út með launum` on — `Orlofsprósenta` input appears with `10,64`
 - Set séreign to 0% — additional pension row is hidden
 - Resize to < 640px — layout stacks to single column
 - Numbers in the breakdown table align on the decimal separator

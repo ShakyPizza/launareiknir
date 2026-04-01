@@ -64,7 +64,7 @@ describe('live calculator tax profiles', () => {
       useSpouseAllowance: false,
       usePensionFund: true,
       payVacationWithSalary: false,
-      vacationPercent: 10.17,
+      vacationPercent: 10.64,
       additionalPensionPct: 2,
       unionFeePct: 0,
     }, CURRENT_TAX_PROFILE);
@@ -84,20 +84,20 @@ describe('live calculator tax profiles', () => {
       useSpouseAllowance: false,
       usePensionFund: true,
       payVacationWithSalary: true,
-      vacationPercent: 10.17,
+      vacationPercent: 10.64,
       additionalPensionPct: 2,
       unionFeePct: 0,
     }, CURRENT_TAX_PROFILE);
 
-    expect(result.vacationPayAmount).toBe(86_445);
-    expect(result.salaryWithVacation).toBe(936_445);
-    expect(result.pensionFundAmount).toBe(37_458);
-    expect(result.additionalPensionAmount).toBe(18_729);
-    expect(result.taxableBase).toBe(880_258);
-    expect(result.employerContributionBase).toBe(936_445);
-    expect(result.employerPensionAmount).toBe(107_691);
-    expect(result.employerSereignMatch).toBe(18_729);
-    expect(result.totalEmployerCost).toBe(1_062_865);
+    expect(result.vacationPayAmount).toBe(90_440);
+    expect(result.salaryWithVacation).toBe(940_440);
+    expect(result.pensionFundAmount).toBe(37_618);
+    expect(result.additionalPensionAmount).toBe(18_809);
+    expect(result.taxableBase).toBe(884_013);
+    expect(result.employerContributionBase).toBe(940_440);
+    expect(result.employerPensionAmount).toBe(108_151);
+    expect(result.employerSereignMatch).toBe(18_809);
+    expect(result.totalEmployerCost).toBe(1_067_400);
   });
 
   it('includes employer-side pension contributions in total compensation share', () => {
@@ -107,7 +107,7 @@ describe('live calculator tax profiles', () => {
       useSpouseAllowance: false,
       usePensionFund: true,
       payVacationWithSalary: true,
-      vacationPercent: 10.17,
+      vacationPercent: 10.64,
       additionalPensionPct: 2,
       unionFeePct: 1,
     }, CURRENT_TAX_PROFILE);
