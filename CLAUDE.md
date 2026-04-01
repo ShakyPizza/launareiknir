@@ -6,6 +6,10 @@ A single static page (Icelandic) hosted on GitHub Pages that visualises monthly 
 as `net pay`, `income tax`, and `pension savings`. Targets a regular wage earner using
 2026 Skatturinn rules, with no edge-case rules that would complicate the first release.
 
+The active implementation for calculator changes is the static app made up of
+`index.html`, `css/*`, and `js/*`. The parallel `src/` Vite prototype is not the
+source of truth unless a task explicitly says to update both implementations.
+
 All calculations are **monthly only** — no annual, weekly, or hourly modes in v1.
 
 ---
@@ -245,12 +249,35 @@ The formatters use the `is-IS` locale (period = thousands separator).
 | Personal allowance (persónuafsláttur) | **72.492 kr./mth** (tax credit) |
 | Mandatory pension (lífeyrissjóður) | **4%** of gross (reduces taxable base) |
 | Additional pension (séreign) | **0–4%** of gross (reduces taxable base) |
+| Employer pension contribution | **11,5%** of wage base |
+| Employer séreign match | **2%** when employee pays séreign |
+| Default vacation pay percentage | **10,17%** of entered salary when paid with salary |
 
 Sources:
+- [Launaseðillinn — SA](https://www.sa.is/vinnumarkadsvefur/reiknivelar/launasedillinn/)
+- [Innvinnsla og greiðsla orlofs — SA](https://www.sa.is/vinnumarkadsvefur/starfsmannamal/orlof/innvinnsla-og-greidsla-orlofs)
 - [Staðgreiðsla 2026](https://www.skatturinn.is/einstaklingar/stadgreidsla/stadgreidsla/2026)
 - [Persónuafsláttur](https://www.skatturinn.is/einstaklingar/stadgreidsla/personuafslattur/)
 - [Iðgjald í lífeyrissjóði](https://www.skatturinn.is/einstaklingar/tekjur-og-fradraettir/idgjald-i-lifeyrissjodi/)
 - [Helstu tölur og prósentur 2026](https://www.skatturinn.is/einstaklingar/helstutolur/2026/)
+
+### Vacation pay assumption
+
+When `Orlof greitt út með launum` is enabled, the calculator treats the entered
+`Brúttólaun` as the base monthly salary and adds vacation pay on top:
+
+`salaryWithVacation = baseSalary + (baseSalary × vacationPercent)`
+
+That combined wage base is then used for:
+- employee 4% pension contribution
+- employee séreign contribution
+- taxable base and withholding tax
+- employer pension contribution
+- employer séreign match
+
+This rule follows SA's orlof guidance that vacation pay is calculated from total wages
+and, in this calculator, is treated like other wages when it is paid out together with
+salary.
 
 ### Personal allowance discrepancy
 
@@ -278,6 +305,7 @@ Test case: 850.000 kr. gross, personal allowance on, pension on, séreign 2%:
 Check:
 - Tab through all controls — terracotta focus ring appears on every interactive element
 - Toggle pension off — breakdown rows disappear cleanly
+- Toggle `Orlof greitt út með launum` on — `Orlofsprósenta` input appears with `10,17`
 - Set séreign to 0% — additional pension row is hidden
 - Resize to < 640px — layout stacks to single column
 - Numbers in the breakdown table align on the decimal separator

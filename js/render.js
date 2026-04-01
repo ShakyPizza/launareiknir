@@ -115,6 +115,9 @@ export function renderBreakdown(root, result) {
 
   html += groupOpen('Laun');
   html += row('Brúttólaun', result.grossSalary);
+  if (result.vacationPayAmount > 0) {
+    html += row('Orlof greitt út með launum', result.vacationPayAmount);
+  }
   html += groupClose;
 
   html += groupOpen('Frádráttur');
@@ -199,7 +202,10 @@ export function renderEmployerBreakdown(root, result) {
 
   html += groupOpen('Kostnaður launagreiðanda');
   html += row('Brúttólaun', result.grossSalary);
-  html += row('Lífeyrissjóður launagreiðanda (11,5%)', result.employerPensionAmount);
+  if (result.vacationPayAmount > 0) {
+    html += row('Orlof greitt út með launum', result.vacationPayAmount);
+  }
+  html += row('Mótframlag í lífeyrissjóð (11,5%)', result.employerPensionAmount);
   if (result.employerSereignMatch > 0) {
     html += row('Séreign — viðbót launagreiðanda (2%)', result.employerSereignMatch);
   }
@@ -217,15 +223,15 @@ export function renderEmployerBreakdown(root, result) {
 
 /**
  * Render the bottom XY line chart.
- * X axis: gross salary 0–5M kr. Y axis: share of gross 0–100%.
+ * X axis: gross salary. Y axis: share of gross with a dynamic ceiling.
  *
  * @param {HTMLElement} root
  * @param {import('./calculator.js').CalculationResult} result
- * @param {Array<{ gross: number, net: number, tax: number, pension: number, additionalPension: number, unionFee: number }>} curve
+ * @param {Array<{ gross: number, net: number, tax: number, pension: number, additionalPension: number, unionFee: number, employerPension: number, employerSereignMatch: number, totalCompensation: number }>} curve
  * @param {number} [graphMax=5_000_000]
  * @param {{
  *   comparisonResult?: import('./calculator.js').CalculationResult|null,
- *   comparisonCurve?: Array<{ gross: number, net: number, tax: number }> | null,
+ *   comparisonCurve?: Array<{ gross: number, net: number, tax: number, pension: number, additionalPension: number, unionFee: number, employerPension: number, employerSereignMatch: number, totalCompensation: number }> | null,
  *   comparisonLabel?: string,
  * }} [options]
  */
@@ -254,7 +260,6 @@ export function renderBottomGraph(root, result, curve, graphMax = 5_000_000, opt
   const MAX = graphMax;
 
   const toX = (gross) => ML + (gross / MAX) * CW;
-  const toY = (share) => MT + CH - Math.max(share, 0) * CH;
 
   const colorNet = cssVar('--color-gross', '#164b59');
   const colorTax = cssVar('--color-tax', '#8b3018');
@@ -270,9 +275,35 @@ export function renderBottomGraph(root, result, curve, graphMax = 5_000_000, opt
   const hasPension = result.pensionFundAmount > 0;
   const hasAdditional = result.additionalPensionAmount > 0;
   const hasUnion = result.unionFeeAmount > 0;
-  const totalShare = result.netShare + result.pensionShare + result.additionalPensionShare + result.unionFeeShare;
+  const totalShare = result.totalCompensationShare;
 
-  const yTicks = [0, 0.25, 0.5, 0.75, 1.0];
+  const shareValues = curve
+    .filter((point) => point.gross > 0)
+    .flatMap((point) => [
+      point.net / point.gross,
+      point.tax / point.gross,
+      point.pension / point.gross,
+      point.additionalPension / point.gross,
+      point.unionFee / point.gross,
+      point.totalCompensation / point.gross,
+    ]);
+
+  if (comparisonCurve) {
+    comparisonCurve
+      .filter((point) => point.gross > 0)
+      .forEach((point) => {
+        shareValues.push(point.net / point.gross, point.tax / point.gross);
+      });
+  }
+
+  const maxShare = shareValues.length > 0 ? Math.max(...shareValues) : 1;
+  const yMax = Math.max(1, Math.ceil(maxShare / 0.25) * 0.25);
+  const toY = (share) => MT + CH - (Math.max(share, 0) / yMax) * CH;
+
+  const yTicks = [];
+  for (let tick = 0; tick <= yMax + 0.001; tick += 0.25) {
+    yTicks.push(Number(tick.toFixed(2)));
+  }
   const yGrid = yTicks.map((pct) => {
     const y = toY(pct);
     const label = `${Math.round(pct * 100)}%`;
@@ -308,7 +339,7 @@ export function renderBottomGraph(root, result, curve, graphMax = 5_000_000, opt
   const pensionPoints = pts(curve, (point) => point.pension);
   const additionalPoints = pts(curve, (point) => point.additionalPension);
   const unionPoints = pts(curve, (point) => point.unionFee);
-  const totalPoints = pts(curve, (point) => point.net + point.pension + point.additionalPension + point.unionFee);
+  const totalPoints = pts(curve, (point) => point.totalCompensation);
 
   const comparisonNetPoints = comparisonCurve
     ? pts(comparisonCurve, (point) => point.net)

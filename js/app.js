@@ -5,8 +5,12 @@
  * @module app
  */
 
-import { calculate, clampSalary, buildCurveData } from './calculator.js';
-import { CURRENT_TAX_PROFILE, PROPOSAL_TAX_PROFILE } from './tax-tables.js';
+import { calculate, clampSalary, clampVacationPercent, buildCurveData } from './calculator.js';
+import {
+  CURRENT_TAX_PROFILE,
+  PROPOSAL_TAX_PROFILE,
+  DEFAULT_VACATION_PERCENT,
+} from './tax-tables.js';
 import {
   renderHero,
   renderNetComparison,
@@ -20,6 +24,8 @@ const DEFAULT_STATE = Object.freeze({
   usePersonalAllowance: true,
   useSpouseAllowance:   false,
   usePensionFund:       true,
+  payVacationWithSalary: false,
+  vacationPercent:      DEFAULT_VACATION_PERCENT,
   additionalPensionPct: 2,
   unionFeePct:          0,
 });
@@ -97,6 +103,8 @@ function renderCalculatorMarkup(root, { prefix, graphHint, showInputs = true }) 
   const allowanceId = controlId(prefix, 'toggle-allowance');
   const spouseAllowanceId = controlId(prefix, 'toggle-spouse-allowance');
   const pensionId = controlId(prefix, 'toggle-pension');
+  const vacationPayId = controlId(prefix, 'toggle-vacation-pay');
+  const vacationPercentId = controlId(prefix, 'input-vacation-percent');
   const additionalPensionId = controlId(prefix, 'input-additional-pension');
   const unionFeeId = controlId(prefix, 'input-union-fee');
 
@@ -178,6 +186,37 @@ function renderCalculatorMarkup(root, { prefix, graphHint, showInputs = true }) 
                 <span class="toggle__track" aria-hidden="true"></span>
                 <span class="toggle__text">Lífeyrissjóður (4%)</span>
               </label>
+              <label class="toggle" for="${vacationPayId}">
+                <input
+                  class="toggle__input"
+                  type="checkbox"
+                  id="${vacationPayId}"
+                  name="payVacationWithSalary"
+                  data-role="toggle-vacation-pay"
+                >
+                <span class="toggle__track" aria-hidden="true"></span>
+                <span class="toggle__text">Orlof greitt út með launum</span>
+              </label>
+              <div class="toggle-subfield" data-role="vacation-percent-field" hidden>
+                <div class="field__row">
+                  <div class="field__wrapper">
+                    <input
+                      class="field__input"
+                      type="number"
+                      id="${vacationPercentId}"
+                      name="vacationPercent"
+                      min="0"
+                      max="100"
+                      step="0.01"
+                      value="${DEFAULT_STATE.vacationPercent}"
+                      inputmode="decimal"
+                      aria-label="Orlofsprósenta"
+                      data-role="vacation-percent-input"
+                    >
+                    <span class="field__suffix" aria-hidden="true">%</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -359,6 +398,9 @@ function createCalculatorController(root, options) {
       toggleAllowance: getRequired(root, '[data-role="toggle-allowance"]'),
       toggleSpouseAllowance: getRequired(root, '[data-role="toggle-spouse-allowance"]'),
       togglePension: getRequired(root, '[data-role="toggle-pension"]'),
+      toggleVacationPay: getRequired(root, '[data-role="toggle-vacation-pay"]'),
+      vacationPercentField: getRequired(root, '[data-role="vacation-percent-field"]'),
+      vacationPercentInput: getRequired(root, '[data-role="vacation-percent-input"]'),
       unionFeeInput: getRequired(root, '[data-role="union-fee-input"]'),
       additionalPensionRange: getRequired(root, '[data-role="additional-pension-range"]'),
       additionalBadge: getRequired(root, '[data-role="additional-pension-badge"]'),
@@ -414,6 +456,25 @@ function createCalculatorController(root, options) {
     inputElements.additionalBadge.textContent = `${selectedValue}%`;
   }
 
+  /**
+   * Parse and clamp a vacation percentage from a text input.
+   *
+   * @param {string} value
+   * @returns {number}
+   */
+  function parseVacationPercent(value) {
+    const normalized = value.replace(',', '.');
+    return clampVacationPercent(Number.parseFloat(normalized));
+  }
+
+  function syncVacationControls() {
+    if (!inputElements) return;
+
+    inputElements.toggleVacationPay.checked = state.payVacationWithSalary;
+    inputElements.vacationPercentField.hidden = !state.payVacationWithSalary;
+    inputElements.vacationPercentInput.value = String(state.vacationPercent);
+  }
+
   function render() {
     const result = calculate(state, options.taxProfile);
     const curve = buildCurveData(state, options.taxProfile);
@@ -426,6 +487,7 @@ function createCalculatorController(root, options) {
       ? buildCurveData(state, options.comparisonTaxProfile)
       : null;
 
+    syncVacationControls();
     renderHero(root, result);
     renderNetComparison(
       root,
@@ -469,6 +531,16 @@ function createCalculatorController(root, options) {
 
     inputElements.togglePension.addEventListener('change', () => {
       state.usePensionFund = inputElements.togglePension.checked;
+      render();
+    });
+
+    inputElements.toggleVacationPay.addEventListener('change', () => {
+      state.payVacationWithSalary = inputElements.toggleVacationPay.checked;
+      render();
+    });
+
+    inputElements.vacationPercentInput.addEventListener('input', () => {
+      state.vacationPercent = parseVacationPercent(inputElements.vacationPercentInput.value);
       render();
     });
 
