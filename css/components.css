@@ -175,6 +175,10 @@
   user-select: none;
 }
 
+.toggle-subfield {
+  padding-left: calc(32px + var(--space-3));
+}
+
 .toggle__input {
   position: absolute;
   opacity:  0;

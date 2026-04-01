@@ -146,6 +146,38 @@
                   <span class="toggle__track" aria-hidden="true"></span>
                   <span class="toggle__text">Lífeyrissjóður (4%)</span>
                 </label>
+                <label class="toggle" for="toggle-vacation-pay">
+                  <input
+                    class="toggle__input"
+                    type="checkbox"
+                    id="toggle-vacation-pay"
+                    name="payVacationWithSalary"
+                  >
+                  <span class="toggle__track" aria-hidden="true"></span>
+                  <span class="toggle__text">Orlof greitt út með launum</span>
+                </label>
+                <div class="toggle-subfield" id="vacation-percent-field" hidden>
+                  <div class="field__header">
+                    <label class="field__label" for="input-vacation-percent">Orlofsprósenta</label>
+                  </div>
+                  <div class="field__row">
+                    <div class="field__wrapper">
+                      <input
+                        class="field__input"
+                        type="number"
+                        id="input-vacation-percent"
+                        name="vacationPercent"
+                        min="0"
+                        max="100"
+                        step="0.01"
+                        value="10.17"
+                        inputmode="decimal"
+                        aria-label="Orlofsprósenta sem greidd er út með launum"
+                      >
+                      <span class="field__suffix" aria-hidden="true">%</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -266,10 +298,18 @@
             frádráttarbær á sama hátt.
           </p>
           <p>
+            Ef orlof er greitt út með launum er það reiknað ofan á innslegin
+            brúttólaun og meðhöndlað eins og önnur laun við staðgreiðslu og
+            launatengd gjöld. Mótframlag launagreiðanda í lífeyrissjóð og
+            viðbót í séreign miðast þá einnig við brúttólaun ásamt orlofi.
+          </p>
+          <p>
             Athugið: Þessi útreikningur er einungis til viðmiðunar. Nákvæmar tölur
             geta verið mismunandi eftir aðstæðum.
           </p>
           <ul class="source-list">
+            <li><a href="https://www.sa.is/vinnumarkadsvefur/reiknivelar/launasedillinn/" target="_blank" rel="noreferrer">Launaseðillinn — SA</a></li>
+            <li><a href="https://www.sa.is/vinnumarkadsvefur/starfsmannamal/orlof/innvinnsla-og-greidsla-orlofs" target="_blank" rel="noreferrer">Innvinnsla og greiðsla orlofs — SA</a></li>
             <li><a href="https://www.skatturinn.is/einstaklingar/stadgreidsla/stadgreidsla/2026" target="_blank" rel="noreferrer">Staðgreiðsla 2026 — Skatturinn</a></li>
             <li><a href="https://www.skatturinn.is/einstaklingar/helstutolur/2026/" target="_blank" rel="noreferrer">Helstu tölur og prósentur 2026 — Skatturinn</a></li>
             <li><a href="https://www.skatturinn.is/einstaklingar/tekjur-og-fradraettir/idgjald-i-lifeyrissjodi/" target="_blank" rel="noreferrer">Iðgjald í lífeyrissjóði — Skatturinn</a></li>

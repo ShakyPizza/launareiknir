@@ -75,6 +75,16 @@ export const EMPLOYER_PENSION_RATE = 0.115;
 export const EMPLOYER_SEREIGN_MATCH_RATE = 0.02;
 
 /**
+ * Default vacation pay percentage when vacation is paid with salary.
+ * SA lists 10,17% as the minimum vacation pay percentage for 24 vacation days.
+ *
+ * Source: sa.is/vinnumarkadsvefur/starfsmannamal/orlof/innvinnsla-og-greidsla-orlofs
+ *
+ * @type {number}
+ */
+export const DEFAULT_VACATION_PERCENT = 10.17;
+
+/**
  * Maximum gross salary accepted by the calculator (in ISK).
  * Beyond this, results become less meaningful for a simple tool.
  *

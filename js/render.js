@@ -157,6 +157,9 @@ export function renderBreakdown(result) {
   /* ── Group: Laun ── */
   html += groupOpen('Laun');
   html += row('Brúttólaun', result.grossSalary);
+  if (result.vacationPayAmount > 0) {
+    html += row('Orlof greitt út með launum', result.vacationPayAmount);
+  }
   html += groupClose;
 
   /* ── Group: Frádráttur ── */
@@ -247,7 +250,10 @@ export function renderEmployerBreakdown(result) {
   /* ── Group: Kostnaður launagreiðanda ── */
   html += groupOpen('Kostnaður launagreiðanda');
   html += row('Brúttólaun', result.grossSalary);
-  html += row('Lífeyrissjóður launagreiðanda (11,5%)', result.employerPensionAmount);
+  if (result.vacationPayAmount > 0) {
+    html += row('Orlof greitt út með launum', result.vacationPayAmount);
+  }
+  html += row('Mótframlag í lífeyrissjóð (11,5%)', result.employerPensionAmount);
   if (result.employerSereignMatch > 0) {
     html += row('Séreign — viðbót launagreiðanda (2%)', result.employerSereignMatch);
   }
@@ -266,11 +272,11 @@ export function renderEmployerBreakdown(result) {
 
 /**
  * Render the bottom XY line chart.
- * X axis: gross salary 0–5M kr. Y axis: share of gross 0–100%.
- * Net% line falls and tax% line rises as gross increases — the key story.
+ * X axis: entered gross salary 0–5M kr. Y axis: share of entered gross salary.
+ * The Y ceiling expands in 25% steps when total compensation rises above 100%.
  *
  * @param {import('./calculator.js').CalculationResult} result — current calculation (for the marker)
- * @param {Array<{ gross: number, net: number, tax: number }>} curve — pre-computed sweep
+ * @param {Array<{ gross: number, net: number, tax: number, pension: number, additionalPension: number, unionFee: number, totalCompensation: number }>} curve — pre-computed sweep
  * @param {number} [graphMax=5_000_000] — x-axis upper bound in ISK
  */
 export function renderBottomGraph(result, curve, graphMax = 5_000_000) {
@@ -291,9 +297,8 @@ export function renderBottomGraph(result, curve, graphMax = 5_000_000) {
   const CH = H - MT - MB;
   const MAX = graphMax;
 
-  /* X = gross salary (kr), Y = share of gross (0–1, inverted for SVG) */
+  /* X = entered gross salary (kr), Y = share of gross (0–yMax, inverted for SVG) */
   const toX = (gross) => ML + (gross / MAX) * CW;
-  const toY = (share) => MT + CH - Math.max(share, 0) * CH;
 
   /* ── Colors ──────────────────────────────────── */
   const colorNet        = cssVar('--color-gross');
@@ -310,10 +315,30 @@ export function renderBottomGraph(result, curve, graphMax = 5_000_000) {
   const hasAdditional = result.additionalPensionAmount > 0;
   const hasUnion      = result.unionFeeAmount > 0;
 
-  const totalShare = result.netShare + result.pensionShare + result.additionalPensionShare + result.unionFeeShare;
+  const totalShare = result.totalCompensationShare;
+  const maxShare = Math.max(
+    1,
+    ...curve.map((point) => (
+      point.gross === 0
+        ? 0
+        : Math.max(
+            point.net / point.gross,
+            point.tax / point.gross,
+            point.pension / point.gross,
+            point.additionalPension / point.gross,
+            point.unionFee / point.gross,
+            point.totalCompensation / point.gross,
+          )
+    ))
+  );
+  const yMax = Math.max(1, Math.ceil(maxShare / 0.25) * 0.25);
+  const toY = (share) => MT + CH - (Math.min(Math.max(share, 0), yMax) / yMax) * CH;
 
-  /* ── Y axis: 0–100% share of gross ──────────── */
-  const yTicks = [0, 0.25, 0.5, 0.75, 1.0];
+  /* ── Y axis: 0–dynamic ceiling share of gross ─ */
+  const yTicks = [];
+  for (let tick = 0; tick <= yMax + 0.001; tick += 0.25) {
+    yTicks.push(Number(tick.toFixed(2)));
+  }
   const yGrid  = yTicks.map((pct) => {
     const y     = toY(pct);
     const label = `${Math.round(pct * 100)}%`;
@@ -350,7 +375,7 @@ export function renderBottomGraph(result, curve, graphMax = 5_000_000) {
   const pensionPoints    = pts((p) => p.pension);
   const additionalPoints = pts((p) => p.additionalPension);
   const unionPoints      = pts((p) => p.unionFee);
-  const totalPoints      = pts((p) => p.net + p.pension + p.additionalPension + p.unionFee);
+  const totalPoints      = pts((p) => p.totalCompensation);
 
   /* ── Current salary marker (vertical rule) ───── */
   const mx = toX(result.grossSalary).toFixed(1);

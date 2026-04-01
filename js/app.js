@@ -6,7 +6,12 @@
  * @module app
  */
 
-import { calculate, clampSalary, buildCurveData } from './calculator.js';
+import {
+  buildCurveData,
+  calculate,
+  clampSalary,
+  clampVacationPercent,
+} from './calculator.js';
 import { renderHero, renderBreakdown, renderEmployerBreakdown, renderBottomGraph } from './render.js';
 
 /* ── Tab state ─────────────────────────────────────── */
@@ -20,6 +25,8 @@ const state = {
   usePersonalAllowance: true,
   useSpouseAllowance:   false,
   usePensionFund:       true,
+  payVacationWithSalary: false,
+  vacationPercent:      10.17,
   additionalPensionPct: 2,
   unionFeePct:          0,
 };
@@ -31,7 +38,10 @@ const elSalaryNumber         = /** @type {HTMLInputElement} */ (document.getElem
 const elSalaryBadge          = document.getElementById('salary-badge');
 const elToggleAllowance      = /** @type {HTMLInputElement} */ (document.getElementById('toggle-allowance'));
 const elTogglePension        = /** @type {HTMLInputElement} */ (document.getElementById('toggle-pension'));
+const elToggleVacationPay    = /** @type {HTMLInputElement} */ (document.getElementById('toggle-vacation-pay'));
 const elToggleSpouseAllowance = /** @type {HTMLInputElement} */ (document.getElementById('toggle-spouse-allowance'));
+const elVacationPercentField = document.getElementById('vacation-percent-field');
+const elVacationPercentInput = /** @type {HTMLInputElement} */ (document.getElementById('input-vacation-percent'));
 const elUnionFeeInput        = /** @type {HTMLInputElement} */ (document.getElementById('input-union-fee'));
 const elAdditionalBadge      = document.getElementById('additional-pension-badge');
 const elStepBtns             = /** @type {NodeListOf<HTMLButtonElement>} */ (
@@ -91,6 +101,25 @@ function syncSalary(value) {
   if (elSalaryBadge) elSalaryBadge.textContent = formatBadge(clamped);
 }
 
+/** Parse and clamp the vacation percentage from a number-like input string. */
+function parseVacationPercent(value) {
+  const normalized = value.replace(',', '.');
+  return clampVacationPercent(Number.parseFloat(normalized));
+}
+
+/** Sync the vacation pay toggle and its dependent input visibility. */
+function syncVacationControls() {
+  if (elToggleVacationPay) {
+    elToggleVacationPay.checked = state.payVacationWithSalary;
+  }
+  if (elVacationPercentField) {
+    elVacationPercentField.hidden = !state.payVacationWithSalary;
+  }
+  if (elVacationPercentInput) {
+    elVacationPercentInput.value = String(state.vacationPercent);
+  }
+}
+
 /** Activate a tab panel and update aria-selected on tab buttons. */
 function switchTab(tabId) {
   activeTab = tabId;
@@ -120,6 +149,7 @@ function render() {
   const result   = calculate(state);
   const curve    = buildCurveData(state);
   const graphMax = state.grossMonthly > 5_000_000 ? 10_000_000 : 5_000_000;
+  syncVacationControls();
   renderHero(result);
   renderBreakdown(result);
   renderEmployerBreakdown(result);
@@ -148,6 +178,11 @@ elTogglePension.addEventListener('change', () => {
   render();
 });
 
+elToggleVacationPay.addEventListener('change', () => {
+  state.payVacationWithSalary = elToggleVacationPay.checked;
+  render();
+});
+
 elToggleSpouseAllowance.addEventListener('change', () => {
   state.useSpouseAllowance = elToggleSpouseAllowance.checked;
   render();
@@ -156,6 +191,11 @@ elToggleSpouseAllowance.addEventListener('change', () => {
 elUnionFeeInput.addEventListener('input', () => {
   const raw = parseFloat(elUnionFeeInput.value);
   state.unionFeePct = Number.isFinite(raw) && raw >= 0 ? Math.min(raw, 10) : 0;
+  render();
+});
+
+elVacationPercentInput.addEventListener('input', () => {
+  state.vacationPercent = parseVacationPercent(elVacationPercentInput.value);
   render();
 });
 
