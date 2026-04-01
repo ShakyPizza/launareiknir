@@ -211,14 +211,13 @@ function renderCalculatorMarkup(root, { prefix, graphHint, showInputs = true }) 
                   <div class="field__wrapper">
                     <input
                       class="field__input"
-                      type="number"
+                      type="text"
                       id="${vacationPercentId}"
                       name="vacationPercent"
-                      min="0"
-                      max="100"
-                      step="0.01"
                       value="${DEFAULT_STATE.vacationPercent}"
                       inputmode="decimal"
+                      autocomplete="off"
+                      spellcheck="false"
                       aria-label="Orlofsprósenta"
                       data-role="vacation-percent-input"
                     >
@@ -260,14 +259,13 @@ function renderCalculatorMarkup(root, { prefix, graphHint, showInputs = true }) 
               <div class="field__wrapper">
                 <input
                   class="field__input"
-                  type="number"
+                  type="text"
                   id="${unionFeeId}"
                   name="unionFee"
-                  min="0"
-                  max="10"
-                  step="0.1"
                   value="0"
                   inputmode="decimal"
+                  autocomplete="off"
+                  spellcheck="false"
                   aria-label="Iðgjald í stéttarfélag sem hlutfall af brúttólaunum"
                   data-role="union-fee-input"
                 >
@@ -567,7 +565,8 @@ function createCalculatorController(root, options) {
     });
 
     inputElements.unionFeeInput.addEventListener('input', () => {
-      const raw = parseFloat(inputElements.unionFeeInput.value);
+      const normalized = inputElements.unionFeeInput.value.replace(/\s+/g, '').replace(',', '.');
+      const raw = parseFloat(normalized);
       state.unionFeePct = Number.isFinite(raw) && raw >= 0 ? Math.min(raw, 10) : 0;
       render();
     });
