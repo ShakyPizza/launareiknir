@@ -133,16 +133,7 @@ export function renderBreakdown(root, result) {
   html += groupClose;
 
   html += groupOpen('Staðgreiðsla');
-  html += row('Tekjuskattur (fyrir persónuafslátt)', result.taxBeforeAllowance);
-
-  if (result.personalAllowanceUsed > 0) {
-    html += row('Persónuafsláttur', -result.personalAllowanceUsed);
-  }
-  if (result.spouseAllowanceUsed > 0) {
-    html += row('Persónuafsláttur maka', -result.spouseAllowanceUsed);
-  }
-
-  html += row('Staðgreiðsla', -result.taxAfterAllowance);
+  html += row('Tekjuskattur (fyrir persónuafslátt)', -result.taxBeforeAllowance);
 
   result.bracketBreakdown
     .filter((bracket) => bracket.taxableAmount > 0)
@@ -152,6 +143,15 @@ export function renderBreakdown(root, result) {
         bracket.taxAmount,
       );
     });
+
+  if (result.personalAllowanceUsed > 0) {
+    html += row('Persónuafsláttur', result.personalAllowanceUsed);
+  }
+  if (result.spouseAllowanceUsed > 0) {
+    html += row('Persónuafsláttur maka', result.spouseAllowanceUsed);
+  }
+
+  html += row('Staðgreiðsla', -result.taxAfterAllowance);
 
   html += groupClose;
 
