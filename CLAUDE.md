@@ -31,6 +31,7 @@ All calculations are **monthly only** — no annual, weekly, or hourly modes in 
 - Add English translation
 - Add Polish translation
 - Evaluate support for additional pay periods and special rules
+- Replace inline SVG path for GitHub icon with the official GitHub logo asset
 
 ---
 

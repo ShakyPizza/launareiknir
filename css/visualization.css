@@ -118,6 +118,18 @@
   gap: var(--space-2);
 }
 
+.bottom-graph__legend-divider {
+  grid-column: 1 / -1;
+  height: 1px;
+  background: var(--color-rule);
+  margin: var(--space-1) 0;
+}
+
+.bottom-graph__item--compare .bottom-graph__label,
+.bottom-graph__item--compare .bottom-graph__value {
+  color: var(--color-text-muted);
+}
+
 .bottom-graph__swatch {
   width: 12px;
   height: 12px;
@@ -130,6 +142,17 @@
 .bottom-graph__swatch--additional { background: var(--color-deduction); }
 .bottom-graph__swatch--union      { background: var(--color-union); }
 .bottom-graph__swatch--total      { background: var(--color-text-muted); }
+.bottom-graph__swatch--compare-net,
+.bottom-graph__swatch--compare-tax {
+  width:           12px;
+  height:          0;
+  background:      transparent;
+  border-top-width: 2px;
+  border-top-style: dashed;
+}
+
+.bottom-graph__swatch--compare-net { border-top-color: var(--color-gross); }
+.bottom-graph__swatch--compare-tax { border-top-color: var(--color-tax); }
 
 .bottom-graph__label {
   font-size: var(--text-sm);

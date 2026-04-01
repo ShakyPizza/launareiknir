@@ -3,8 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Launareiknir 2026 — Nettólaun, skattar og lífeyrir</title>
-  <meta name="description" content="Reiknaðu nettólaun þín, tekjuskatt og lífeyrisgjald á einfaldan og skýran hátt. Staðgreiðslureglur 2026.">
+  <title>Launareiknir 2026 á Íslandi — Reiknaðu nettólaun, brúttólaun og skatt</title>
+  <meta name="description" content="Launareiknir fyrir Ísland 2026. Reiknaðu nettólaun, brúttólaun, tekjuskatt, persónuafslátt og lífeyrissjóð miðað við staðgreiðslureglur á Íslandi.">
+  <link rel="canonical" href="https://shakypizza.github.io/launareiknir/">
+  <meta name="robots" content="index,follow">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="is_IS">
+  <meta property="og:site_name" content="Launareiknir">
+  <meta property="og:title" content="Launareiknir 2026 á Íslandi — Reiknaðu nettólaun, brúttólaun og skatt">
+  <meta property="og:description" content="Reiknaðu nettólaun, brúttólaun, tekjuskatt, persónuafslátt og lífeyrissjóð á Íslandi með launareikni fyrir 2026.">
+  <meta property="og:url" content="https://shakypizza.github.io/launareiknir/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Launareiknir 2026 á Íslandi">
+  <meta name="twitter:description" content="Reiknaðu nettólaun, brúttólaun og skatt á Íslandi með einföldum launareikni fyrir 2026.">
   <meta name="referrer" content="no-referrer">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'">
 
@@ -32,10 +43,31 @@
     <div class="container">
       <div class="site-header__inner">
         <div>
-          <h1 class="site-header__title">Launareiknir</h1>
-          <p class="site-header__subtitle">Útgáfa 0.6</p>
+          <h1 class="site-header__title">Launareiknir fyrir nettólaun á Íslandi</h1>
+          <p class="site-header__subtitle">Brúttólaun, skattur og lífeyrir 2026</p>
         </div>
         <div class="site-header__controls">
+          <label class="toggle site-header__proposal-toggle">
+            <input
+              class="toggle__input"
+              id="proposal-toggle"
+              type="checkbox"
+              aria-controls="proposal-section"
+          >
+            <span class="toggle__track" aria-hidden="true"></span>
+            <span class="toggle__text">Tillaga Sjálfstæðisflokksins</span>
+          </label>
+          <a
+            class="github-link"
+            href="https://github.com/ShakyPizza/launareiknir"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Skoða kóðann á GitHub"
+          >
+            <svg viewBox="0 0 16 16" fill="currentColor" width="14" height="14" aria-hidden="true">
+              <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+            </svg>
+          </a>
           <button
             class="theme-toggle"
             id="theme-toggle"
@@ -59,7 +91,7 @@
               <rect x="11.42" y="11.98" width="1.5" height="2" transform="rotate(45 11.42 11.98)"/>
             </svg>
           </button>
-          <span class="site-header__badge">2026</span>
+          <span class="site-header__badge">BOP | 2026</span>
         </div>
       </div>
     </div>
@@ -146,38 +178,6 @@
                   <span class="toggle__track" aria-hidden="true"></span>
                   <span class="toggle__text">Lífeyrissjóður (4%)</span>
                 </label>
-                <label class="toggle" for="toggle-vacation-pay">
-                  <input
-                    class="toggle__input"
-                    type="checkbox"
-                    id="toggle-vacation-pay"
-                    name="payVacationWithSalary"
-                  >
-                  <span class="toggle__track" aria-hidden="true"></span>
-                  <span class="toggle__text">Orlof greitt út með launum</span>
-                </label>
-                <div class="toggle-subfield" id="vacation-percent-field" hidden>
-                  <div class="field__header">
-                    <label class="field__label" for="input-vacation-percent">Orlofsprósenta</label>
-                  </div>
-                  <div class="field__row">
-                    <div class="field__wrapper">
-                      <input
-                        class="field__input"
-                        type="number"
-                        id="input-vacation-percent"
-                        name="vacationPercent"
-                        min="0"
-                        max="100"
-                        step="0.01"
-                        value="10.17"
-                        inputmode="decimal"
-                        aria-label="Orlofsprósenta sem greidd er út með launum"
-                      >
-                      <span class="field__suffix" aria-hidden="true">%</span>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
 
@@ -187,101 +187,32 @@
                 <label class="field__label" for="input-additional-pension">Séreignarsparnaður</label>
                 <span class="field__badge" id="additional-pension-badge">2%</span>
               </div>
-              <div class="step-slider" role="group" aria-label="Séreignarhlutfall">
-                <button class="step-slider__btn step-slider__btn--active" data-value="0" type="button" aria-pressed="false">0%</button>
-                <button class="step-slider__btn step-slider__btn--active" data-value="2" type="button" aria-pressed="true">2%</button>
-                <button class="step-slider__btn" data-value="4" type="button" aria-pressed="false">4%</button>
+              <div class="faq-item">
+                <h3>Tekur launareiknirinn mið af persónuafslætti?</h3>
+                <p>
+                  Já. Þú getur kveikt og slökkt á persónuafslætti í reiknivélinni til að sjá hvernig
+                  hann hefur áhrif á staðgreiðslu og nettólaun. Einnig er hægt að sjá hvernig persónuafsláttur maka nýtist til hagsbóta ef maki er ekki útivinnandi.
+                </p>
               </div>
-              <p class="field__hint">Frádráttarbær séreign (0, 2, 4% af brúttólaunum)</p>
-            </div>
-
-            <!-- Union fee -->
-            <div class="field field--union-fee">
-              <div class="field__header">
-                <label class="field__label" for="input-union-fee">Iðgjald stéttarfélags</label>
+              <div class="faq-item">
+                <h3>Tekur reiknivélin mið af lífeyrissjóði og séreign?</h3>
+                <p>
+                  Já. Reiknivélin sýnir áhrif 4% lífeyrissjóðsiðgjalds og valkvæðrar séreignar á
+                  bæði skattstofn og útborguð laun.
+                </p>
               </div>
-              <div class="field__row">
-                <div class="field__wrapper">
-                  <input
-                    class="field__input"
-                    type="number"
-                    id="input-union-fee"
-                    name="unionFee"
-                    min="0"
-                    max="10"
-                    step="0.1"
-                    value="0"
-                    inputmode="decimal"
-                    aria-label="Iðgjald í stéttarfélag sem hlutfall af brúttólaunum"
-                  >
-                  <span class="field__suffix" aria-hidden="true">%</span>
-                </div>
+              <div class="faq-item">
+                <h3>Er þetta opinber launareiknivél?</h3>
+                <p>
+                  Nei alls ekki, þetta er sjálfstæður launareiknir til viðmiðunar sem byggir á opinberum
+                  heimildum frá Skattinum fyrir árið 2026. 
+                  Í guðanna bænum ekki vaða í mannauðssviðið með upplýsingar frá þessari reiknivél.
+                </p>
               </div>
-              <p class="field__hint">Dregið frá eftir skatt (venjulega 0,5-1% af brúttólaunum)</p>
             </div>
-
-          </div><!-- /.inputs-fields -->
-
-        </section>
-
-        <!-- RESULT PANEL -->
-        <section
-          class="calculator__results"
-          aria-label="Niðurstöður"
-          aria-live="polite"
-          aria-atomic="true"
-        >
-
-          <!-- Net salary hero -->
-          <div class="result-hero">
-            <div class="result-hero__label">Nettólaun á mánuði</div>
-            <div class="result-hero__value" id="net-salary-value">—</div>
-            <div class="result-hero__share" id="net-salary-share"></div>
-          </div>
-
-          <!-- Tab navigation -->
-          <div class="tab-nav" role="tablist" aria-label="Úttaksyfirlit">
-            <button
-              class="tab-nav__btn tab-nav__btn--active"
-              role="tab"
-              aria-selected="true"
-              data-tab="employee"
-              type="button"
-            >Starfsmaður</button>
-            <button
-              class="tab-nav__btn"
-              role="tab"
-              aria-selected="false"
-              data-tab="employer"
-              type="button"
-            >Launagreiðandi</button>
-          </div>
-
-          <!-- Employee breakdown (default visible) -->
-          <div class="breakdown" id="breakdown-container" role="tabpanel">
-            <!-- Populated by render.js -->
-          </div>
-
-          <!-- Employer cost breakdown (default hidden) -->
-          <div class="breakdown" id="employer-breakdown" role="tabpanel" hidden>
-            <!-- Populated by render.js -->
-          </div>
-
-        </section>
-
-        <!-- XY line chart — third column, spans 2 units -->
-        <div class="calculator__graph">
-          <section class="bottom-graph" aria-labelledby="bottom-graph-title">
-            <div class="bottom-graph__header">
-              <h2 class="bottom-graph__title" id="bottom-graph-title">Nettólaun og skattur sem fall af brúttólaunum</h2>
-              <p class="bottom-graph__hint">X-ás: brúttólaun (kr.) · Y-ás: hlutfall af brúttólaunum</p>
-            </div>
-            <div class="bottom-graph__chart" id="bottom-graph-chart" aria-hidden="true"></div>
-            <div class="bottom-graph__legend" id="bottom-graph-legend" aria-hidden="true"></div>
-          </section>
+          </article>
         </div>
-
-      </div>
+      </section>
     </div>
   </main>
 
@@ -298,18 +229,10 @@
             frádráttarbær á sama hátt.
           </p>
           <p>
-            Ef orlof er greitt út með launum er það reiknað ofan á innslegin
-            brúttólaun og meðhöndlað eins og önnur laun við staðgreiðslu og
-            launatengd gjöld. Mótframlag launagreiðanda í lífeyrissjóð og
-            viðbót í séreign miðast þá einnig við brúttólaun ásamt orlofi.
-          </p>
-          <p>
             Athugið: Þessi útreikningur er einungis til viðmiðunar. Nákvæmar tölur
             geta verið mismunandi eftir aðstæðum.
           </p>
           <ul class="source-list">
-            <li><a href="https://www.sa.is/vinnumarkadsvefur/reiknivelar/launasedillinn/" target="_blank" rel="noreferrer">Launaseðillinn — SA</a></li>
-            <li><a href="https://www.sa.is/vinnumarkadsvefur/starfsmannamal/orlof/innvinnsla-og-greidsla-orlofs" target="_blank" rel="noreferrer">Innvinnsla og greiðsla orlofs — SA</a></li>
             <li><a href="https://www.skatturinn.is/einstaklingar/stadgreidsla/stadgreidsla/2026" target="_blank" rel="noreferrer">Staðgreiðsla 2026 — Skatturinn</a></li>
             <li><a href="https://www.skatturinn.is/einstaklingar/helstutolur/2026/" target="_blank" rel="noreferrer">Helstu tölur og prósentur 2026 — Skatturinn</a></li>
             <li><a href="https://www.skatturinn.is/einstaklingar/tekjur-og-fradraettir/idgjald-i-lifeyrissjodi/" target="_blank" rel="noreferrer">Iðgjald í lífeyrissjóði — Skatturinn</a></li>
