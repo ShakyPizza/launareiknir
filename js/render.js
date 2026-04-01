@@ -277,8 +277,8 @@ export function renderBottomGraph(root, result, curve, graphMax = 5_000_000, opt
   const hasUnion = result.unionFeeAmount > 0;
   const totalShare = result.totalCompensationShare;
   const totalLabel = result.vacationPayAmount > 0
-    ? 'Nettólaun, orlofsgreiðslur og sjóðir samtals'
-    : 'Nettólaun og sjóðir samtals';
+    ? 'Nettólaun, orlofsgreiðslur og sjóðir samtals (inniheldur mótframlag launagreiðanda)'
+    : 'Nettólaun og sjóðir samtals (inniheldur mótframlag launagreiðanda)';
 
   const shareValues = curve
     .filter((point) => point.gross > 0)
