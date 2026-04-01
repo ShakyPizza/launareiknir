@@ -128,6 +128,16 @@ export const EMPLOYER_PENSION_RATE = 0.115;
 export const EMPLOYER_SEREIGN_MATCH_RATE = 0.02;
 
 /**
+ * Default vacation pay percentage when vacation is paid with salary.
+ * The calculator currently assumes a 10,64% minimum vacation pay percentage.
+ *
+ * Source: sa.is/vinnumarkadsvefur/starfsmannamal/orlof/innvinnsla-og-greidsla-orlofs
+ *
+ * @type {number}
+ */
+export const DEFAULT_VACATION_PERCENT = 10.64;
+
+/**
  * Maximum gross salary accepted by the calculator (in ISK).
  * Beyond this, results become less meaningful for a simple tool.
  *

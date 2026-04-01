@@ -56,4 +56,70 @@ describe('live calculator tax profiles', () => {
     expect(result.taxAfterAllowance).toBe(0);
     expect(result.netSalary).toBe(500_000);
   });
+
+  it('preserves the current salary basis when vacation pay is disabled', () => {
+    const result = calculate({
+      grossMonthly: 850_000,
+      usePersonalAllowance: true,
+      useSpouseAllowance: false,
+      usePensionFund: true,
+      payVacationWithSalary: false,
+      vacationPercent: 10.64,
+      additionalPensionPct: 2,
+      unionFeePct: 0,
+    }, CURRENT_TAX_PROFILE);
+
+    expect(result.vacationPayAmount).toBe(0);
+    expect(result.salaryWithVacation).toBe(850_000);
+    expect(result.pensionFundAmount).toBe(34_000);
+    expect(result.additionalPensionAmount).toBe(17_000);
+    expect(result.employerContributionBase).toBe(850_000);
+    expect(result.totalEmployerCost).toBe(964_750);
+  });
+
+  it('adds vacation pay on top of entered salary and uses the combined base downstream', () => {
+    const result = calculate({
+      grossMonthly: 850_000,
+      usePersonalAllowance: true,
+      useSpouseAllowance: false,
+      usePensionFund: true,
+      payVacationWithSalary: true,
+      vacationPercent: 10.64,
+      additionalPensionPct: 2,
+      unionFeePct: 0,
+    }, CURRENT_TAX_PROFILE);
+
+    expect(result.vacationPayAmount).toBe(90_440);
+    expect(result.salaryWithVacation).toBe(940_440);
+    expect(result.pensionFundAmount).toBe(37_618);
+    expect(result.additionalPensionAmount).toBe(18_809);
+    expect(result.taxableBase).toBe(884_013);
+    expect(result.employerContributionBase).toBe(940_440);
+    expect(result.employerPensionAmount).toBe(108_151);
+    expect(result.employerSereignMatch).toBe(18_809);
+    expect(result.totalEmployerCost).toBe(1_067_400);
+  });
+
+  it('includes employer-side pension contributions in total compensation share', () => {
+    const result = calculate({
+      grossMonthly: 100_000,
+      usePersonalAllowance: true,
+      useSpouseAllowance: false,
+      usePensionFund: true,
+      payVacationWithSalary: true,
+      vacationPercent: 10.64,
+      additionalPensionPct: 2,
+      unionFeePct: 1,
+    }, CURRENT_TAX_PROFILE);
+
+    expect(result.totalCompensationAmount).toBe(
+      result.netSalary +
+      result.pensionFundAmount +
+      result.additionalPensionAmount +
+      result.unionFeeAmount +
+      result.employerPensionAmount +
+      result.employerSereignMatch,
+    );
+    expect(result.totalCompensationShare).toBeGreaterThan(1);
+  });
 });
