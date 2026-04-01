@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://shakypizza.github.io/launareiknir/sitemap.xml
+Sitemap: https://www.launareiknir.benediktorri.is/sitemap.xml
