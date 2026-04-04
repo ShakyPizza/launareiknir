@@ -275,10 +275,13 @@ export function renderBottomGraph(root, result, curve, graphMax = 5_000_000, opt
   const hasPension = result.pensionFundAmount > 0;
   const hasAdditional = result.additionalPensionAmount > 0;
   const hasUnion = result.unionFeeAmount > 0;
-  const totalShare = result.totalCompensationShare;
-  const totalLabel = result.vacationPayAmount > 0
-    ? 'Nettólaun, orlofsgreiðslur og sjóðir samtals (inniheldur mótframlag launagreiðanda)'
-    : 'Nettólaun og sjóðir samtals (inniheldur mótframlag launagreiðanda)';
+  // Commented out: the "samtals" total-compensation share and label are hidden because
+  // combining employer-side contributions with employee net pay produces a share > 100%
+  // of gross, which is confusing when plotted alongside the other per-gross-% lines.
+  // const totalShare = result.totalCompensationShare;
+  // const totalLabel = result.vacationPayAmount > 0
+  //   ? 'Nettólaun, orlofsgreiðslur og sjóðir samtals (inniheldur mótframlag launagreiðanda)'
+  //   : 'Nettólaun og sjóðir samtals (inniheldur mótframlag launagreiðanda)';
 
   const shareValues = curve
     .filter((point) => point.gross > 0)
@@ -288,7 +291,7 @@ export function renderBottomGraph(root, result, curve, graphMax = 5_000_000, opt
       point.pension / point.gross,
       point.additionalPension / point.gross,
       point.unionFee / point.gross,
-      point.totalCompensation / point.gross,
+      // point.totalCompensation / point.gross,  // commented out — see totalShare note above
     ]);
 
   if (comparisonCurve) {
@@ -342,7 +345,7 @@ export function renderBottomGraph(root, result, curve, graphMax = 5_000_000, opt
   const pensionPoints = pts(curve, (point) => point.pension);
   const additionalPoints = pts(curve, (point) => point.additionalPension);
   const unionPoints = pts(curve, (point) => point.unionFee);
-  const totalPoints = pts(curve, (point) => point.totalCompensation);
+  // const totalPoints = pts(curve, (point) => point.totalCompensation);  // commented out — see totalShare note above
 
   const comparisonNetPoints = comparisonCurve
     ? pts(comparisonCurve, (point) => point.net)
@@ -359,6 +362,8 @@ export function renderBottomGraph(root, result, curve, graphMax = 5_000_000, opt
   const compareDot = (share, color) =>
     `<circle cx="${mx}" cy="${toY(share).toFixed(1)}" r="2.5" fill="${colorBg}" stroke="${color}" stroke-width="1.25"/>`;
 
+  // The totalShare dot (solidDot(totalShare, colorTotal)) has been removed from the marker
+  // — see totalShare note above. Add it back here if the samtals line is re-enabled.
   const marker = `
       <line x1="${mx}" y1="${MT}" x2="${mx}" y2="${MT + CH}" stroke="${colorAccent}" stroke-width="1" stroke-dasharray="4,3"/>
       ${solidDot(result.netShare, colorNet)}
@@ -366,10 +371,13 @@ export function renderBottomGraph(root, result, curve, graphMax = 5_000_000, opt
       ${hasPension ? solidDot(result.pensionShare, colorPension) : ''}
       ${hasAdditional ? solidDot(result.additionalPensionShare, colorAdditional) : ''}
       ${hasUnion ? solidDot(result.unionFeeShare, colorUnion) : ''}
-      ${solidDot(totalShare, colorTotal)}
       ${comparisonResult ? compareDot(comparisonResult.netShare, colorNet) : ''}
       ${comparisonResult ? compareDot(comparisonResult.taxShare, colorTax) : ''}`;
 
+  // The "total" polyline (bottom-graph__polyline--total, built from totalPoints) has been
+  // removed from the SVG below — see totalShare note above. To restore it, add:
+  // `<polyline class="bottom-graph__polyline bottom-graph__polyline--total" points="${totalPoints}" fill="none" stroke="${colorTotal}" stroke-width="1" stroke-linejoin="round"/>`
+  // just before ${marker}.
   chartEl.innerHTML = `<svg
       class="bottom-graph__svg"
       viewBox="0 0 ${W} ${H}"
@@ -388,7 +396,6 @@ export function renderBottomGraph(root, result, curve, graphMax = 5_000_000, opt
       ${comparisonCurve ? `<polyline class="bottom-graph__polyline bottom-graph__polyline--compare-tax" points="${comparisonTaxPoints}" fill="none" stroke="${colorTax}" stroke-width="1.25" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="5,4" stroke-opacity="0.45"/>` : ''}
       <polyline class="bottom-graph__polyline bottom-graph__polyline--tax" points="${taxPoints}" fill="none" stroke="${colorTax}" stroke-width="1.5" stroke-linejoin="round"/>
       <polyline class="bottom-graph__polyline bottom-graph__polyline--net" points="${netPoints}" fill="none" stroke="${colorNet}" stroke-width="1.5" stroke-linejoin="round"/>
-      <polyline class="bottom-graph__polyline bottom-graph__polyline--total" points="${totalPoints}" fill="none" stroke="${colorTotal}" stroke-width="1" stroke-linejoin="round"/>
       ${marker}
     </svg>`;
 
@@ -409,7 +416,7 @@ export function renderBottomGraph(root, result, curve, graphMax = 5_000_000, opt
     hasPension ? legendItem('pension', 'Lífeyrissjóður', formatPct(result.pensionShare)) : '',
     hasAdditional ? legendItem('additional', 'Séreign', formatPct(result.additionalPensionShare)) : '',
     hasUnion ? legendItem('union', 'Iðgjald stéttarfélags', formatPct(result.unionFeeShare)) : '',
-    legendItem('total', totalLabel, formatPct(totalShare)),
+    // legendItem('total', totalLabel, formatPct(totalShare)),  — commented out, see totalShare note above
     comparisonDivider,
     comparisonResult
       ? legendItem('compare-net', `Nettólaun — ${comparisonLabel}`, formatPct(comparisonResult.netShare), 'bottom-graph__item--compare')
