@@ -7,8 +7,7 @@ as `net pay`, `income tax`, and `pension savings`. Targets a regular wage earner
 2026 Skatturinn rules, with no edge-case rules that would complicate the first release.
 
 The active implementation for calculator changes is the static app made up of
-`index.html`, `css/*`, and `js/*`. The parallel `src/` Vite prototype is not the
-source of truth unless a task explicitly says to update both implementations.
+`index.html`, `css/*`, and `js/*`.
 
 All calculations are **monthly only** — no annual, weekly, or hourly modes in v1.
 
@@ -17,12 +16,10 @@ All calculations are **monthly only** — no annual, weekly, or hourly modes in 
 ## Out of scope (v1)
 
 - Multiple employers
-- Spouse's personal allowance (persónuafsláttur maka)
 - Child tax credits
 - Limited tax liability (takmörkuð skattskylda)
 - Seafarer rules
 - Other specific deductions
-- Municipality selection
 
 ---
 
@@ -42,7 +39,7 @@ All calculations are **monthly only** — no annual, weekly, or hourly modes in 
 The site is a data tool, not a product homepage. The visual language borrows from
 well-designed annual reports, tax forms, and statistics publications — not SaaS
 dashboards. The goal is to feel like something Skatturinn would have built if they
-had good designers.
+had good designers lol.
 
 Key principles:
 - Warm paper tones, near-black ink, one controlled accent (volcanic terracotta)
@@ -248,7 +245,7 @@ The formatters use the `is-IS` locale (period = thousands separator).
 | Bracket 3 | > 1.398.450 kr./mth at **46,29%** |
 | Personal allowance (persónuafsláttur) | **72.492 kr./mth** (tax credit) |
 | Mandatory pension (lífeyrissjóður) | **4%** of gross (reduces taxable base) |
-| Additional pension (séreign) | **0–4%** of gross (reduces taxable base) |
+| Additional pension (séreign) | **0, 2 or 4%** of gross (reduces taxable base) |
 | Employer pension contribution | **11,5%** of wage base |
 | Employer séreign match | **2%** when employee pays séreign |
 | Default vacation pay percentage | **10,64%** of entered salary when paid with salary |
