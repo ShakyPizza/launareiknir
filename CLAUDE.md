@@ -2,12 +2,14 @@
 
 ## Project goal
 
-A single static page (Icelandic) hosted on GitHub Pages that visualises monthly salary
-as `net pay`, `income tax`, and `pension savings`. Targets a regular wage earner using
-2026 Skatturinn rules, with no edge-case rules that would complicate the first release.
+A single static page (Icelandic) self-hosted via Docker/Traefik/nginx that visualises
+monthly salary as `net pay`, `income tax`, and `pension savings`. Targets a regular
+wage earner using 2026 Skatturinn rules, with no edge-case rules that would complicate
+the first release.
 
-The active implementation for calculator changes is the static app made up of
-`index.html`, `css/*`, and `js/*`.
+The source files are `index.html`, `css/*`, and `js/*` at the repo root. On deploy,
+Vite builds these into `dist/` which nginx serves. The `dist/` folder in the repo is
+a local build artifact and is not committed.
 
 All calculations are **monthly only** — no annual, weekly, or hourly modes in v1.
 
