@@ -177,6 +177,7 @@
 
 .toggle-subfield {
   padding-left: calc(32px + var(--space-3));
+  width:        100%;
 }
 
 .toggle__input {
