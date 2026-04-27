@@ -56,8 +56,15 @@ export function renderHero(root, result) {
  * @param {import('./calculator.js').CalculationResult} result
  * @param {import('./calculator.js').CalculationResult|null} comparisonResult
  * @param {string} [comparisonLabel='Núverandi kerfi']
+ * @param {string} [primaryLabel='Niðurstaða']
  */
-export function renderNetComparison(root, result, comparisonResult, comparisonLabel = 'Núverandi kerfi') {
+export function renderNetComparison(
+  root,
+  result,
+  comparisonResult,
+  comparisonLabel = 'Núverandi kerfi',
+  primaryLabel = 'Niðurstaða',
+) {
   const container = getRole(root, 'net-comparison-summary');
 
   if (!comparisonResult) {
@@ -65,7 +72,7 @@ export function renderNetComparison(root, result, comparisonResult, comparisonLa
     return;
   }
 
-  getRole(root, 'proposal-net-label').textContent = 'Tillaga Sjálfstæðisflokksins';
+  getRole(root, 'proposal-net-label').textContent = primaryLabel;
   getRole(root, 'proposal-net-amount').textContent = formatISK(result.netSalary);
   getRole(root, 'proposal-net-share').textContent = `${formatPct(result.netShare)} af brúttólaunum`;
 

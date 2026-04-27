@@ -71,29 +71,40 @@ export const CURRENT_PERSONAL_ALLOWANCE_MONTHLY_2026 = 72_492;
 export const PROPOSAL_PERSONAL_ALLOWANCE_MONTHLY_2026 = 100_000;
 
 /**
- * Tax profiles used throughout the calculator UI.
+ * Current 2026 tax profile used by the public calculator.
+ *
+ * @type {{ key: string, name: string, shortLabel: string, brackets: Array<{ label: string, lowerBound: number, upperBound: number|null, rate: number }>, personalAllowanceMonthly: number }}
+ */
+export const CURRENT_TAX_PROFILE = {
+  key:                    'current',
+  name:                   'Núverandi skattkerfi 2026',
+  shortLabel:             'Núverandi kerfi',
+  brackets:               CURRENT_TAX_BRACKETS_2026,
+  personalAllowanceMonthly: CURRENT_PERSONAL_ALLOWANCE_MONTHLY_2026,
+};
+
+/**
+ * Optional proposal profile retained for future comparison work.
+ *
+ * @type {{ key: string, name: string, shortLabel: string, brackets: Array<{ label: string, lowerBound: number, upperBound: number|null, rate: number }>, personalAllowanceMonthly: number }}
+ */
+export const PROPOSAL_TAX_PROFILE = {
+  key:                    'proposal',
+  name:                   'Tillaga Sjálfstæðisflokksins',
+  shortLabel:             'Tillaga Sjálfstæðisflokksins',
+  brackets:               PROPOSAL_TAX_BRACKETS_2026,
+  personalAllowanceMonthly: PROPOSAL_PERSONAL_ALLOWANCE_MONTHLY_2026,
+};
+
+/**
+ * Tax profiles used by tests and future comparison UI.
  *
  * @type {{ key: string, name: string, shortLabel: string, brackets: Array<{ label: string, lowerBound: number, upperBound: number|null, rate: number }>, personalAllowanceMonthly: number }[]}
  */
 export const TAX_PROFILES = [
-  {
-    key:                    'current',
-    name:                   'Núverandi skattkerfi 2026',
-    shortLabel:             'Núverandi kerfi',
-    brackets:               CURRENT_TAX_BRACKETS_2026,
-    personalAllowanceMonthly: CURRENT_PERSONAL_ALLOWANCE_MONTHLY_2026,
-  },
-  {
-    key:                    'proposal',
-    name:                   'Tillaga Sjálfstæðisflokksins',
-    shortLabel:             'Tillaga Sjálfstæðisflokksins',
-    brackets:               PROPOSAL_TAX_BRACKETS_2026,
-    personalAllowanceMonthly: PROPOSAL_PERSONAL_ALLOWANCE_MONTHLY_2026,
-  },
+  CURRENT_TAX_PROFILE,
+  PROPOSAL_TAX_PROFILE,
 ];
-
-export const CURRENT_TAX_PROFILE = TAX_PROFILES[0];
-export const PROPOSAL_TAX_PROFILE = TAX_PROFILES[1];
 
 /* Backwards-compatible aliases for the original single-profile app. */
 export const TAX_BRACKETS_2026 = CURRENT_TAX_BRACKETS_2026;
