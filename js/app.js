@@ -8,7 +8,6 @@
 import { calculate, clampSalary, clampVacationPercent, buildCurveData } from './calculator.js';
 import {
   CURRENT_TAX_PROFILE,
-  PROPOSAL_TAX_PROFILE,
   DEFAULT_VACATION_PERCENT,
 } from './tax-tables.js';
 import {
@@ -105,9 +104,9 @@ function controlId(prefix, name) {
  * Render the full calculator markup into a container root.
  *
  * @param {HTMLElement} root
- * @param {{ prefix: string, graphHint: string, showInputs?: boolean }} options
+ * @param {{ prefix: string, graphHint: string, showInputs?: boolean, showComparisonSummary?: boolean }} options
  */
-function renderCalculatorMarkup(root, { prefix, graphHint, showInputs = true }) {
+function renderCalculatorMarkup(root, { prefix, graphHint, showInputs = true, showComparisonSummary = false }) {
   const salaryRangeId = controlId(prefix, 'salary-range');
   const salaryNumberId = controlId(prefix, 'input-gross');
   const allowanceId = controlId(prefix, 'toggle-allowance');
@@ -278,6 +277,27 @@ function renderCalculatorMarkup(root, { prefix, graphHint, showInputs = true }) 
       </section>`
     : '';
 
+  const comparisonSummaryMarkup = showComparisonSummary
+    ? `
+        <div class="comparison-summary" data-role="net-comparison-summary" hidden>
+          <div class="comparison-summary__header">
+            <span class="comparison-summary__eyebrow">Samanburður á nettólaunum</span>
+          </div>
+          <div class="comparison-summary__grid">
+            <div class="comparison-summary__card comparison-summary__card--proposal">
+              <div class="comparison-summary__label" data-role="proposal-net-label"></div>
+              <div class="comparison-summary__amount" data-role="proposal-net-amount"></div>
+              <div class="comparison-summary__share" data-role="proposal-net-share"></div>
+            </div>
+            <div class="comparison-summary__card comparison-summary__card--current">
+              <div class="comparison-summary__label" data-role="comparison-net-label"></div>
+              <div class="comparison-summary__amount" data-role="comparison-net-amount"></div>
+              <div class="comparison-summary__share" data-role="comparison-net-share"></div>
+            </div>
+          </div>
+        </div>`
+    : '';
+
   root.innerHTML = `
     <div class="calculator${showInputs ? '' : ' calculator--results-only'}">
       ${inputsMarkup}
@@ -327,23 +347,7 @@ function renderCalculatorMarkup(root, { prefix, graphHint, showInputs = true }) 
           <div class="bottom-graph__legend" data-role="bottom-graph-legend" aria-hidden="true"></div>
         </section>
 
-        <div class="comparison-summary" data-role="net-comparison-summary" hidden>
-          <div class="comparison-summary__header">
-            <span class="comparison-summary__eyebrow">Samanburður á nettólaunum</span>
-          </div>
-          <div class="comparison-summary__grid">
-            <div class="comparison-summary__card comparison-summary__card--proposal">
-              <div class="comparison-summary__label" data-role="proposal-net-label"></div>
-              <div class="comparison-summary__amount" data-role="proposal-net-amount"></div>
-              <div class="comparison-summary__share" data-role="proposal-net-share"></div>
-            </div>
-            <div class="comparison-summary__card comparison-summary__card--current">
-              <div class="comparison-summary__label" data-role="comparison-net-label"></div>
-              <div class="comparison-summary__amount" data-role="comparison-net-amount"></div>
-              <div class="comparison-summary__share" data-role="comparison-net-share"></div>
-            </div>
-          </div>
-        </div>
+        ${comparisonSummaryMarkup}
       </div>
     </div>
   `;
@@ -384,6 +388,7 @@ function createCalculatorController(root, options) {
     prefix: options.prefix,
     graphHint: options.graphHint,
     showInputs: options.showInputs,
+    showComparisonSummary: Boolean(options.comparisonTaxProfile),
   });
 
   let activeTab = 'employee';
@@ -509,12 +514,15 @@ function createCalculatorController(root, options) {
 
     syncVacationControls();
     renderHero(root, result);
-    renderNetComparison(
-      root,
-      result,
-      comparisonResult,
-      options.comparisonTaxProfile?.shortLabel ?? 'Núverandi kerfi',
-    );
+    if (options.comparisonTaxProfile) {
+      renderNetComparison(
+        root,
+        result,
+        comparisonResult,
+        options.comparisonTaxProfile.shortLabel,
+        options.taxProfile.shortLabel,
+      );
+    }
     renderBreakdown(root, result);
     renderEmployerBreakdown(root, result);
     renderBottomGraph(root, result, curve, graphMax, {
@@ -608,67 +616,28 @@ function createCalculatorController(root, options) {
 }
 
 /**
- * Initialize the header toggle that reveals or hides the proposal section.
- *
- * @param {Document} doc
- */
-function initProposalToggle(doc) {
-  const proposalToggle = /** @type {HTMLInputElement|null} */ (doc.getElementById('proposal-toggle'));
-  const proposalSection = /** @type {HTMLElement|null} */ (doc.getElementById('proposal-section'));
-
-  if (!proposalToggle || !proposalSection) return;
-
-  const syncProposalVisibility = () => {
-    proposalSection.hidden = !proposalToggle.checked;
-  };
-
-  syncProposalVisibility();
-  proposalToggle.addEventListener('input', syncProposalVisibility);
-  proposalToggle.addEventListener('change', syncProposalVisibility);
-}
-
-/**
  * Initialize the live calculator page.
  *
  * @param {Document} [doc=document]
- * @returns {{ currentController: ReturnType<typeof createCalculatorController>, proposalController: ReturnType<typeof createCalculatorController>|null } | null}
+ * @returns {{ currentController: ReturnType<typeof createCalculatorController> } | null}
  */
 export function initPage(doc = document) {
   const currentRoot = /** @type {HTMLElement|null} */ (doc.getElementById('current-calculator-root'));
   if (!currentRoot) return null;
 
-  const proposalRoot = /** @type {HTMLElement|null} */ (doc.getElementById('proposal-calculator-root'));
-
   initTheme(doc);
-  initProposalToggle(doc);
 
   const sharedState = { ...DEFAULT_STATE };
-  let proposalController = null;
 
   const currentController = createCalculatorController(currentRoot, {
     prefix: 'current',
     state: sharedState,
     taxProfile: CURRENT_TAX_PROFILE,
     graphHint: 'X-ás: brúttólaun (kr.) · Y-ás: hlutfall af brúttólaunum',
-    onRender: () => {
-      proposalController?.render();
-    },
   });
-
-  proposalController = proposalRoot
-    ? createCalculatorController(proposalRoot, {
-      prefix: 'proposal',
-      state: sharedState,
-      taxProfile: PROPOSAL_TAX_PROFILE,
-      comparisonTaxProfile: CURRENT_TAX_PROFILE,
-      graphHint: 'X-ás: brúttólaun (kr.) · Y-ás: hlutfall af brúttólaunum · brotalínur sýna núverandi kerfi',
-      showInputs: false,
-    })
-    : null;
 
   return {
     currentController,
-    proposalController,
   };
 }
 

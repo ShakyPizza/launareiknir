@@ -102,8 +102,8 @@ export function clampVacationPercent(value) {
  * @property {number} employerPensionAmount     — employer mandatory pension (11.5% of gross)
  * @property {number} employerSereignMatch      — employer séreign match (2% of gross, only if employee séreign > 0)
  * @property {number} totalEmployerCost         — gross + employerPensionAmount + employerSereignMatch
- * // @property {number} totalCompensationAmount   — commented out; see note in function body
- * // @property {number} totalCompensationShare    — commented out; see note in function body
+ * @property {number} totalCompensationAmount   — net pay plus employee and employer-side pension lines
+ * @property {number} totalCompensationShare    — totalCompensationAmount / gross (0–1)
  */
 export function calculate({
   grossMonthly,
@@ -159,22 +159,21 @@ export function calculate({
     ? Math.round(employerContributionBase * EMPLOYER_SEREIGN_MATCH_RATE)
     : 0;
   const totalEmployerCost = gross + vacationPayAmount + employerPensionAmount + employerSereignMatch;
-  // Commented out: "Nettólaun og sjóðir samtals (inniheldur mótframlag launagreiðanda)"
+  // Kept as calculation data, but not displayed in the chart:
+  // "Nettólaun og sjóðir samtals (inniheldur mótframlag launagreiðanda)".
   // This figure adds employer-side contributions (11.5% pension, séreign match) to the
   // employee's net pay and deductions, producing a number larger than gross salary. While
   // arithmetically correct as a total compensation cost, it conflates the employer's cost
   // of employment with the employee's take-home perspective and is easily misread as a
   // meaningful net-pay metric. Displaying it alongside per-cent-of-gross shares on the
-  // graph is misleading because the share exceeds 100% for most salary levels. Keep the
-  // code in case we find a clearer way to present it in a future iteration.
-  //
-  // const totalCompensationAmount =
-  //   roundedNetSalary +
-  //   pensionFundAmount +
-  //   additionalPensionAmount +
-  //   clampedUnionFee +
-  //   employerPensionAmount +
-  //   employerSereignMatch;
+  // graph is misleading because the share exceeds 100% for most salary levels.
+  const totalCompensationAmount =
+    roundedNetSalary +
+    pensionFundAmount +
+    additionalPensionAmount +
+    clampedUnionFee +
+    employerPensionAmount +
+    employerSereignMatch;
 
   const pct = (n) => gross === 0 ? 0 : n / gross;
 
@@ -202,8 +201,8 @@ export function calculate({
     employerPensionAmount,
     employerSereignMatch,
     totalEmployerCost,
-    // totalCompensationAmount,        // commented out — see note above
-    // totalCompensationShare:  pct(totalCompensationAmount),
+    totalCompensationAmount,
+    totalCompensationShare:  pct(totalCompensationAmount),
   };
 }
 
