@@ -1,0 +1,38 @@
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Hvað er munurinn á brúttólaunum og nettólaunum?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Brúttólaun eru launin áður en staðgreiðsla og iðgjöld eru dregin frá. Nettólaun eru upphæðin sem stendur eftir eftir skatt og frádrátt, og er það sem þú færð greitt út. Yfirleitt þegar talað er um laun er verið að tala um heildarlaun (brúttólaun), því frádráttur launa getur verið mjög mismunandi eftir einstaklingum og því enganvegin forsenda fyrir samanburði á útborguðum launum frekar en heilarlaunum."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Tekur launareiknirinn mið af persónuafslætti?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Já. Þú getur kveikt og slökkt á persónuafslætti í reiknivélinni til að sjá hvernig hann hefur áhrif á staðgreiðslu og nettólaun. Einnig er hægt að sjá hvernig persónuafsláttur maka nýtist til hagsbóta ef maki er ekki útivinnandi."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Tekur reiknivélin mið af lífeyrissjóði og séreign?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Já. Reiknivélin sýnir áhrif 4% lífeyrissjóðsiðgjalds og valkvæðrar séreignar á bæði skattstofn og útborguð laun."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Er þetta opinber launareiknivél?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Nei alls ekki, þetta er sjálfstæður launareiknir til viðmiðunar sem byggir á opinberum heimildum frá Skattinum fyrir árið 2026. Í guðanna bænum ekki vaða í mannauðssviðið með upplýsingar frá þessari reiknivél."
+      }
+    }
+  ]
+}
