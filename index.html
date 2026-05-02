@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Launareiknir 2026 á Íslandi — Reiknaðu nettólaun, brúttólaun og skatt</title>
+  <title>Launareiknir fyrir nettólaun á Íslandi — 2026</title>
   <meta name="description" content="Launareiknir fyrir Ísland 2026. Reiknaðu nettólaun, brúttólaun, tekjuskatt, persónuafslátt og lífeyrissjóð miðað við staðgreiðslureglur á Íslandi.">
+  <meta name="keywords" content="launareiknir, nettólaun, brúttólaun, skatt, Ísland, 2026, staðgreiðsla, persónuafslátt, lífeyrissjóður, launareikni">
   <link rel="canonical" href="https://www.launareiknir.benediktorri.is/">
   <link rel="icon" href="/favicon.ico" sizes="any">
   <meta name="robots" content="index,follow">
@@ -32,6 +33,83 @@
   <link rel="stylesheet" href="css/layout.css">
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/visualization.css">
+
+  <!-- Schema.org structured data for SEO -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Launareiknir",
+    "url": "https://www.launareiknir.benediktorri.is",
+    "logo": "https://www.launareiknir.benediktorri.is/favicon.ico",
+    "description": "Salary calculator for Iceland using 2026 tax withholding rules",
+    "sameAs": ["https://github.com/ShakyPizza/launareiknir"]
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Launareiknir",
+    "url": "https://www.launareiknir.benediktorri.is",
+    "description": "Interactive salary calculator for calculating net salary, tax withholding, and pension contributions in Iceland based on 2026 tax rules",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Web",
+    "inLanguage": "is",
+    "creator": {
+      "@type": "Person",
+      "url": "https://github.com/ShakyPizza"
+    },
+    "datePublished": "2024-01-01",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "ISK"
+    }
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Hvað er munurinn á brúttólaunum og nettólaunum?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Brúttólaun eru launin áður en staðgreiðsla og iðgjöld eru dregin frá. Nettólaun eru upphæðin sem stendur eftir eftir skatt og frádrátt, og er það sem þú færð greitt út. Yfirleitt þegar talað er um laun er verið að tala um heildarlaun (brúttólaun), því frádráttur launa getur verið mjög mismunandi eftir einstaklingum og því enganvegin forsenda fyrir samanburði á útborguðum launum frekar en heilarlaunum."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Tekur launareiknirinn mið af persónuafslætti?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Já. Þú getur kveikt og slökkt á persónuafslætti í reiknivélinni til að sjá hvernig hann hefur áhrif á staðgreiðslu og nettólaun. Einnig er hægt að sjá hvernig persónuafsláttur maka nýtist til hagsbóta ef maki er ekki útivinnandi."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Tekur reiknivélin mið af lífeyrissjóði og séreign?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Já. Reiknivélin sýnir áhrif 4% lífeyrissjóðsiðgjalds og valkvæðrar séreignar á bæði skattstofn og útborguð laun."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Er þetta opinber launareiknivél?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Nei alls ekki, þetta er sjálfstæður launareiknir til viðmiðunar sem byggir á opinberum heimildum frá Skattinum fyrir árið 2026. Í guðanna bænum ekki vaða í mannauðssviðið með upplýsingar frá þessari reiknivél."
+        }
+      }
+    ]
+  }
+  </script>
 </head>
 <body class="page">
 
@@ -126,6 +204,16 @@
               mismunandi mánaðarlaun, hvort þú nýtir persónuafslátt og hvort þú leggur fyrir í
               séreign. Reiknivélin hentar því bæði til að meta launatilboð og til að skilja betur
               muninn á brúttólaunum og nettólaunum á Íslandi.
+            </p>
+            <h3>Útreikningur skref fyrir skref</h3>
+            <p>
+              Reiknivélin notar opinberar staðgreiðslureglur Íslands fyrir árið 2026. Fyrst eru dregin
+              álagningarframlög (lífeyrissjóður 4% og valkvæð séreign 0–4%) frá brúttólaunum til að
+              finna skattstofn. Síðan er tekjuskattur reiknaður í þrepum samkvæmt þrem skattþrepum:
+              31,49% fyrir laun upp að 498.122 kr., 37,99% fyrir 498.123 til 1.398.450 kr., og 46,29%
+              fyrir allt sem yfir 1.398.450 kr. Loks er persónuafsláttur (72.492 kr./mánuð) dreginn
+              frá útreiknaðri staðgreiðslu. Nettólaun eru þá fundin með því að draga heildariðgjöld og
+              staðgreiðslu frá brúttólaunum.
             </p>
           </article>
 
