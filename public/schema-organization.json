@@ -1,0 +1,9 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Launareiknir",
+  "url": "https://www.launareiknir.benediktorri.is",
+  "logo": "https://www.launareiknir.benediktorri.is/favicon.ico",
+  "description": "Salary calculator for Iceland using 2026 tax withholding rules",
+  "sameAs": ["https://github.com/ShakyPizza/launareiknir"]
+}
