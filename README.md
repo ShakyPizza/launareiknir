@@ -41,12 +41,10 @@ npm run build
 
 Pull requests targeting `main` and pushes to `main` run the test, typecheck, and
 production build checks. Pushes to `main` then run the serialized self-hosted
-deployment, using the exact checked commit and refusing to overwrite local
-changes in the server checkout.
+deployment by invoking `sudo -n /opt/launareiknir/deploy.sh` with no arguments,
+using the runner's existing sudo rule. The script fast-forwards the server's
+`main` checkout to the fetched remote `main`, refuses local changes or divergent
+history, and rebuilds and restarts the service through `/opt/traefik`.
 
-The self-hosted runner must be able to run the checked-out `deploy.sh` through
-noninteractive `sudo`, with access to `/opt/launareiknir`, `/opt/traefik`, and Docker.
-A sudo rule restricted to the previous `/opt/launareiknir/deploy.sh` path must be
-updated by the server administrator before using this workflow. The workflow runs
-the script from the verified checkout so the first deployment also uses the new
-commit validation logic.
+The verification gate applies to the triggering commit. Deployment fetches the
+latest `main`, which may have advanced since that verification run.

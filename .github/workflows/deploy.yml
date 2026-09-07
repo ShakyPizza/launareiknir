@@ -38,7 +38,7 @@ jobs:
         run: npm run build
 
   deploy:
-    name: Deploy verified commit
+    name: Deploy main
     needs: verify
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: self-hosted
@@ -46,10 +46,5 @@ jobs:
       group: production-deploy
       cancel-in-progress: false
     steps:
-      - name: Check out verified commit
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.sha }}
-
-      - name: Deploy pushed commit
-        run: sudo -n "${GITHUB_WORKSPACE}/deploy.sh" "${GITHUB_SHA}"
+      - name: Run deploy script
+        run: sudo -n /opt/launareiknir/deploy.sh
