@@ -5,10 +5,11 @@
  * @module app
  */
 
-import { calculate, clampSalary, clampVacationPercent, buildCurveData } from './calculator.js';
+import { calculate, clampSalary, parseSalaryInput, clampVacationPercent, buildCurveData } from './calculator.js';
 import {
   CURRENT_TAX_PROFILE,
   DEFAULT_VACATION_PERCENT,
+  MAX_GROSS_SALARY,
 } from './tax-tables.js';
 import {
   renderHero,
@@ -18,6 +19,19 @@ import {
   renderBottomGraph,
 } from './render.js';
 
+/**
+ * @typedef {Object} CalculatorState
+ * @property {number} grossMonthly
+ * @property {boolean} usePersonalAllowance
+ * @property {boolean} useSpouseAllowance
+ * @property {boolean} usePensionFund
+ * @property {boolean} payVacationWithSalary
+ * @property {number} vacationPercent
+ * @property {number} additionalPensionPct
+ * @property {number} unionFeePct
+ */
+
+/** @type {Readonly<CalculatorState>} */
 const DEFAULT_STATE = Object.freeze({
   grossMonthly:         850_000,
   usePersonalAllowance: true,
@@ -30,14 +44,22 @@ const DEFAULT_STATE = Object.freeze({
 });
 
 /**
- * Apply a theme and persist the preference.
+ * Apply a theme and optionally persist the preference.
  *
+ * @param {Document} doc
  * @param {'dark'|'light'} theme
  * @param {HTMLButtonElement|null} themeToggle
+ * @param {boolean} [persist=true]
  */
-function applyTheme(theme, themeToggle) {
-  document.documentElement.dataset.theme = theme;
-  localStorage.setItem('theme', theme);
+function applyTheme(doc, theme, themeToggle, persist = true) {
+  doc.documentElement.dataset.theme = theme;
+  if (persist) {
+    try {
+      doc.defaultView?.localStorage.setItem('theme', theme);
+    } catch {
+      // Storage can be unavailable in private browsing or restricted contexts.
+    }
+  }
 
   if (themeToggle) {
     themeToggle.setAttribute(
@@ -51,21 +73,39 @@ function applyTheme(theme, themeToggle) {
  * Initialize the theme toggle for the page.
  *
  * @param {Document} doc
+ * @param {() => void} [onChange]
  */
-function initTheme(doc) {
+function initTheme(doc, onChange = () => {}) {
   const themeToggle = /** @type {HTMLButtonElement|null} */ (doc.getElementById('theme-toggle'));
 
-  const savedTheme = localStorage.getItem('theme');
-  if (savedTheme === 'dark' || savedTheme === 'light') {
-    applyTheme(savedTheme, themeToggle);
+  /** @type {string|null} */
+  let savedTheme = null;
+  try {
+    savedTheme = doc.defaultView?.localStorage.getItem('theme') ?? null;
+  } catch {
+    // Continue with the system preference when storage cannot be read.
   }
+
+  const colorScheme = doc.defaultView?.matchMedia?.('(prefers-color-scheme: dark)');
+  let followsSystemTheme = savedTheme !== 'dark' && savedTheme !== 'light';
+  const initialTheme = followsSystemTheme && colorScheme?.matches ? 'dark' :
+    savedTheme === 'dark' ? 'dark' : 'light';
+  applyTheme(doc, initialTheme, themeToggle, false);
 
   if (!themeToggle) return;
 
   themeToggle.addEventListener('click', () => {
-    const currentTheme = document.documentElement.dataset.theme;
+    const currentTheme = doc.documentElement.dataset.theme;
     const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
-    applyTheme(nextTheme, themeToggle);
+    followsSystemTheme = false;
+    applyTheme(doc, nextTheme, themeToggle);
+    onChange();
+  });
+
+  colorScheme?.addEventListener?.('change', (event) => {
+    if (!followsSystemTheme) return;
+    applyTheme(doc, event.matches ? 'dark' : 'light', themeToggle, false);
+    onChange();
   });
 }
 
@@ -114,7 +154,7 @@ function renderCalculatorMarkup(root, { prefix, graphHint, showInputs = true, sh
   const pensionId = controlId(prefix, 'toggle-pension');
   const vacationPayId = controlId(prefix, 'toggle-vacation-pay');
   const vacationPercentId = controlId(prefix, 'input-vacation-percent');
-  const additionalPensionId = controlId(prefix, 'input-additional-pension');
+  const additionalPensionLabelId = controlId(prefix, 'additional-pension-label');
   const unionFeeId = controlId(prefix, 'input-union-fee');
 
   const inputsMarkup = showInputs
@@ -131,8 +171,8 @@ function renderCalculatorMarkup(root, { prefix, graphHint, showInputs = true, sh
               type="range"
               id="${salaryRangeId}"
               min="0"
-              max="5000000"
-              step="1000"
+              max="${MAX_GROSS_SALARY}"
+              step="1"
               value="${DEFAULT_STATE.grossMonthly}"
               aria-label="Brúttólaun á mánuði (sleðareiknir)"
               data-role="salary-range"
@@ -150,10 +190,12 @@ function renderCalculatorMarkup(root, { prefix, graphHint, showInputs = true, sh
                   spellcheck="false"
                   aria-label="Brúttólaun á mánuði (tölur)"
                   data-role="salary-number"
+                  aria-describedby="${controlId(prefix, 'salary-error')}"
                 >
                 <span class="field__suffix" aria-hidden="true">kr.</span>
               </div>
             </div>
+            <p class="field__hint" id="${controlId(prefix, 'salary-error')}" data-role="salary-error" hidden>Sláðu inn jákvæða tölu, t.d. 850.000 eða 850.000,00. Síðasta gilda upphæð er notuð þar til innsláttur er leiðréttur.</p>
           </div>
 
           <div class="field field--toggles">
@@ -229,24 +271,14 @@ function renderCalculatorMarkup(root, { prefix, graphHint, showInputs = true, sh
 
           <div class="field field--additional-pension">
             <div class="field__header">
-              <label class="field__label" for="${additionalPensionId}">Séreignarsparnaður</label>
+              <span class="field__label" id="${additionalPensionLabelId}">Séreignarsparnaður</span>
               <span class="field__badge" data-role="additional-pension-badge">${DEFAULT_STATE.additionalPensionPct}%</span>
             </div>
-            <div class="step-slider" role="group" aria-label="Séreignarhlutfall" data-role="step-slider">
+            <div class="step-slider" role="group" aria-labelledby="${additionalPensionLabelId}" data-role="step-slider">
               <button class="step-slider__btn" data-value="0" type="button" aria-pressed="false">0%</button>
               <button class="step-slider__btn" data-value="2" type="button" aria-pressed="true">2%</button>
               <button class="step-slider__btn" data-value="4" type="button" aria-pressed="false">4%</button>
             </div>
-            <input
-              class="sr-only"
-              type="range"
-              id="${additionalPensionId}"
-              min="0"
-              max="4"
-              step="2"
-              value="${DEFAULT_STATE.additionalPensionPct}"
-              data-role="additional-pension-range"
-            >
             <p class="field__hint">Frádráttarbær séreign (0, 2, 4% af brúttólaunum)</p>
           </div>
 
@@ -318,7 +350,10 @@ function renderCalculatorMarkup(root, { prefix, graphHint, showInputs = true, sh
           <button
             class="tab-nav__btn tab-nav__btn--active"
             role="tab"
+            id="${controlId(prefix, 'employee-tab')}"
             aria-selected="true"
+            aria-controls="${controlId(prefix, 'employee-panel')}"
+            tabindex="0"
             data-role="tab-btn"
             data-tab="employee"
             type="button"
@@ -326,15 +361,18 @@ function renderCalculatorMarkup(root, { prefix, graphHint, showInputs = true, sh
           <button
             class="tab-nav__btn"
             role="tab"
+            id="${controlId(prefix, 'employer-tab')}"
             aria-selected="false"
+            aria-controls="${controlId(prefix, 'employer-panel')}"
+            tabindex="-1"
             data-role="tab-btn"
             data-tab="employer"
             type="button"
           >Launagreiðandi</button>
         </div>
 
-        <div class="breakdown" data-role="breakdown-container" role="tabpanel"></div>
-        <div class="breakdown" data-role="employer-breakdown" role="tabpanel" hidden></div>
+        <div class="breakdown" id="${controlId(prefix, 'employee-panel')}" data-role="breakdown-container" role="tabpanel" aria-labelledby="${controlId(prefix, 'employee-tab')}" tabindex="0"></div>
+        <div class="breakdown" id="${controlId(prefix, 'employer-panel')}" data-role="employer-breakdown" role="tabpanel" aria-labelledby="${controlId(prefix, 'employer-tab')}" tabindex="0" hidden></div>
       </section>
 
       <div class="calculator__graph">
@@ -356,17 +394,31 @@ function renderCalculatorMarkup(root, { prefix, graphHint, showInputs = true, sh
 /**
  * Find a required element within a calculator root.
  *
- * @template {Element} T
  * @param {ParentNode} root
  * @param {string} selector
- * @returns {T}
+ * @returns {HTMLElement}
  */
 function getRequired(root, selector) {
   const element = root.querySelector(selector);
-  if (!element) {
+  if (!(element instanceof HTMLElement)) {
     throw new Error(`Element fannst ekki: ${selector}`);
   }
-  return /** @type {T} */ (element);
+  return element;
+}
+
+/**
+ * Find a required input within a calculator root.
+ *
+ * @param {ParentNode} root
+ * @param {string} selector
+ * @returns {HTMLInputElement}
+ */
+function getRequiredInput(root, selector) {
+  const element = root.querySelector(selector);
+  if (!(element instanceof HTMLInputElement)) {
+    throw new Error(`Innsláttarreitur fannst ekki: ${selector}`);
+  }
+  return element;
 }
 
 /**
@@ -377,7 +429,7 @@ function getRequired(root, selector) {
  *   prefix: string,
  *   taxProfile: typeof CURRENT_TAX_PROFILE,
  *   comparisonTaxProfile?: typeof CURRENT_TAX_PROFILE | null,
- *   state?: typeof DEFAULT_STATE,
+ *   state?: CalculatorState,
  *   graphHint: string,
  *   showInputs?: boolean,
  *   onRender?: (() => void) | null,
@@ -391,6 +443,7 @@ function createCalculatorController(root, options) {
     showComparisonSummary: Boolean(options.comparisonTaxProfile),
   });
 
+  /** @type {'employee'|'employer'} */
   let activeTab = 'employee';
   const state = options.state ?? { ...DEFAULT_STATE };
   const showInputs = options.showInputs !== false;
@@ -404,17 +457,16 @@ function createCalculatorController(root, options) {
 
   const inputElements = showInputs
     ? {
-      salaryRange: getRequired(root, '[data-role="salary-range"]'),
-      salaryNumber: getRequired(root, '[data-role="salary-number"]'),
+      salaryRange: getRequiredInput(root, '[data-role="salary-range"]'),
+      salaryNumber: getRequiredInput(root, '[data-role="salary-number"]'),
       salaryBadge: getRequired(root, '[data-role="salary-badge"]'),
-      toggleAllowance: getRequired(root, '[data-role="toggle-allowance"]'),
-      toggleSpouseAllowance: getRequired(root, '[data-role="toggle-spouse-allowance"]'),
-      togglePension: getRequired(root, '[data-role="toggle-pension"]'),
-      toggleVacationPay: getRequired(root, '[data-role="toggle-vacation-pay"]'),
+      toggleAllowance: getRequiredInput(root, '[data-role="toggle-allowance"]'),
+      toggleSpouseAllowance: getRequiredInput(root, '[data-role="toggle-spouse-allowance"]'),
+      togglePension: getRequiredInput(root, '[data-role="toggle-pension"]'),
+      toggleVacationPay: getRequiredInput(root, '[data-role="toggle-vacation-pay"]'),
       vacationPercentField: getRequired(root, '[data-role="vacation-percent-field"]'),
-      vacationPercentInput: getRequired(root, '[data-role="vacation-percent-input"]'),
-      unionFeeInput: getRequired(root, '[data-role="union-fee-input"]'),
-      additionalPensionRange: getRequired(root, '[data-role="additional-pension-range"]'),
+      vacationPercentInput: getRequiredInput(root, '[data-role="vacation-percent-input"]'),
+      unionFeeInput: getRequiredInput(root, '[data-role="union-fee-input"]'),
       additionalBadge: getRequired(root, '[data-role="additional-pension-badge"]'),
     }
     : null;
@@ -423,26 +475,19 @@ function createCalculatorController(root, options) {
    * Sync both salary inputs and badge to a new clamped value.
    *
    * @param {number} value
+   * @param {boolean} [formatInput=true]
    */
-  function syncSalary(value) {
+  function syncSalary(value, formatInput = true) {
     if (!inputElements) return;
 
     const clamped = clampSalary(value);
     state.grossMonthly = clamped;
     inputElements.salaryRange.value = String(clamped);
-    inputElements.salaryNumber.value = formatSalaryInput(clamped);
+    if (formatInput) inputElements.salaryNumber.value = formatSalaryInput(clamped);
     inputElements.salaryBadge.textContent = formatBadge(clamped);
-  }
-
-  /**
-   * Parse a salary string that may contain Icelandic thousands separators.
-   *
-   * @param {string} value
-   * @returns {number}
-   */
-  function parseSalaryInput(value) {
-    const digitsOnly = value.replace(/[^\d]/g, '');
-    return digitsOnly === '' ? 0 : Number.parseInt(digitsOnly, 10);
+    inputElements.salaryNumber.removeAttribute('aria-invalid');
+    inputElements.salaryNumber.setCustomValidity('');
+    getRequired(root, '[data-role="salary-error"]').hidden = true;
   }
 
   /**
@@ -455,6 +500,7 @@ function createCalculatorController(root, options) {
     elements.tabButtons.forEach((button) => {
       const isActive = button.dataset.tab === tabId;
       button.setAttribute('aria-selected', isActive ? 'true' : 'false');
+      button.tabIndex = isActive ? 0 : -1;
       button.classList.toggle('tab-nav__btn--active', isActive);
     });
     elements.employeePanel.hidden = tabId !== 'employee';
@@ -462,7 +508,7 @@ function createCalculatorController(root, options) {
   }
 
   /**
-   * Sync step-slider button visuals and hidden range value.
+   * Sync step-slider button visuals and the value badge.
    *
    * @param {number} selectedValue
    */
@@ -475,7 +521,6 @@ function createCalculatorController(root, options) {
       button.classList.toggle('step-slider__btn--active', isSelected);
     });
 
-    inputElements.additionalPensionRange.value = String(selectedValue);
     inputElements.additionalBadge.textContent = `${selectedValue}%`;
   }
 
@@ -543,8 +588,19 @@ function createCalculatorController(root, options) {
     });
 
     inputElements.salaryNumber.addEventListener('input', () => {
-      syncSalary(parseSalaryInput(inputElements.salaryNumber.value));
+      const value = parseSalaryInput(inputElements.salaryNumber.value);
+      if (value === null) {
+        inputElements.salaryNumber.setAttribute('aria-invalid', 'true');
+        inputElements.salaryNumber.setCustomValidity('Sláðu inn gilda launaupphæð.');
+        getRequired(root, '[data-role="salary-error"]').hidden = false;
+        return;
+      }
+      syncSalary(value, false);
       render();
+    });
+
+    inputElements.salaryNumber.addEventListener('blur', () => {
+      if (inputElements.salaryNumber.validity.valid) syncSalary(state.grossMonthly);
     });
 
     inputElements.toggleAllowance.addEventListener('change', () => {
@@ -598,6 +654,26 @@ function createCalculatorController(root, options) {
         switchTab(tabId);
       }
     });
+
+    button.addEventListener('keydown', (event) => {
+      const buttons = Array.from(elements.tabButtons);
+      const currentIndex = buttons.indexOf(button);
+      let nextIndex = currentIndex;
+
+      if (event.key === 'ArrowRight') nextIndex = (currentIndex + 1) % buttons.length;
+      else if (event.key === 'ArrowLeft') nextIndex = (currentIndex - 1 + buttons.length) % buttons.length;
+      else if (event.key === 'Home') nextIndex = 0;
+      else if (event.key === 'End') nextIndex = buttons.length - 1;
+      else return;
+
+      event.preventDefault();
+      const nextButton = buttons[nextIndex];
+      const tabId = nextButton.dataset.tab;
+      if (tabId === 'employee' || tabId === 'employer') {
+        switchTab(tabId);
+        nextButton.focus();
+      }
+    });
   });
 
   if (inputElements) {
@@ -625,11 +701,13 @@ export function initPage(doc = document) {
   const currentRoot = /** @type {HTMLElement|null} */ (doc.getElementById('current-calculator-root'));
   if (!currentRoot) return null;
 
-  initTheme(doc);
+  /** @type {ReturnType<typeof createCalculatorController>|null} */
+  let currentController = null;
+  initTheme(doc, () => currentController?.render());
 
   const sharedState = { ...DEFAULT_STATE };
 
-  const currentController = createCalculatorController(currentRoot, {
+  currentController = createCalculatorController(currentRoot, {
     prefix: 'current',
     state: sharedState,
     taxProfile: CURRENT_TAX_PROFILE,

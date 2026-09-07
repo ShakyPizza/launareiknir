@@ -25,6 +25,22 @@ export function clampSalary(value) {
 }
 
 /**
+ * Parse an Icelandic salary amount without discarding signs or invalid characters.
+ * Empty input represents zero; invalid input returns null so callers can retain
+ * the last valid calculation while the user corrects the field.
+ *
+ * @param {string} value
+ * @returns {number|null}
+ */
+export function parseSalaryInput(value) {
+  const trimmed = value.trim();
+  if (trimmed === '') return 0;
+  if (!/^(?:\d+|\d{1,3}(?:\.\d{3})+)(?:,\d{1,2})?$/.test(trimmed)) return null;
+  const amount = Number(trimmed.replaceAll('.', '').replace(',', '.'));
+  return Number.isFinite(amount) ? clampSalary(amount) : null;
+}
+
+/**
  * Apply progressive monthly tax brackets to a taxable income figure.
  * Returns a per-bracket breakdown as well as the total raw tax.
  *
@@ -68,13 +84,13 @@ export function clampVacationPercent(value) {
  *
  * @param {Object} params
  * @param {number} params.grossMonthly          — gross monthly salary (ISK)
- * @param {boolean} params.usePersonalAllowance — apply persónuafsláttur
- * @param {boolean} params.useSpouseAllowance   — apply transferred persónuafsláttur maka
- * @param {boolean} params.usePensionFund       — deduct 4% lífeyrissjóður
- * @param {boolean} params.payVacationWithSalary — add vacation pay on top of entered salary
- * @param {number} params.vacationPercent       — vacation pay percent applied to entered salary
- * @param {number} params.additionalPensionPct  — additional pension (séreign) 0–4
- * @param {number} params.unionFeePct           — union fee as % of gross (deducted from net after tax)
+ * @param {boolean} [params.usePersonalAllowance] - apply persónuafsláttur
+ * @param {boolean} [params.useSpouseAllowance]   - apply transferred persónuafsláttur maka
+ * @param {boolean} [params.usePensionFund]       - deduct 4% lífeyrissjóður
+ * @param {boolean} [params.payVacationWithSalary] - add vacation pay on top of entered salary
+ * @param {number} [params.vacationPercent]       - vacation pay percent applied to entered salary
+ * @param {number} [params.additionalPensionPct]  - additional pension (séreign) 0–4
+ * @param {number} [params.unionFeePct]           - union fee as % of gross (deducted from net after tax)
  *
  * @returns {CalculationResult}
  *
@@ -97,11 +113,11 @@ export function clampVacationPercent(value) {
  * @property {number} pensionShare              — mandatory pension / gross (0–1)
  * @property {number} additionalPensionShare    — additional pension / gross (0–1)
  * @property {number} unionFeeShare             — union fee / gross (0–1)
- * @property {Array}  bracketBreakdown          — per-bracket detail
+ * @property {Array<{ label: string, rate: number, taxableAmount: number, taxAmount: number }>} bracketBreakdown          — per-bracket detail
  * @property {number} employerContributionBase  — wage base used for employer contributions
  * @property {number} employerPensionAmount     — employer mandatory pension (11.5% of gross)
  * @property {number} employerSereignMatch      — employer séreign match (2% of gross, only if employee séreign > 0)
- * @property {number} totalEmployerCost         — gross + employerPensionAmount + employerSereignMatch
+ * @property {number} totalEmployerCost         — wages and pension subtotal; excludes tryggingagjald and other employer costs
  * @property {number} totalCompensationAmount   — net pay plus employee and employer-side pension lines
  * @property {number} totalCompensationShare    — totalCompensationAmount / gross (0–1)
  */
@@ -175,6 +191,7 @@ export function calculate({
     employerPensionAmount +
     employerSereignMatch;
 
+  /** @param {number} n */
   const pct = (n) => gross === 0 ? 0 : n / gross;
 
   return {

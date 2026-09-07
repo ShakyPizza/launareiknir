@@ -8,6 +8,19 @@
 import { formatISK, formatPct } from './calculator.js';
 
 /**
+ * @typedef {Object} CurvePoint
+ * @property {number} gross
+ * @property {number} net
+ * @property {number} tax
+ * @property {number} pension
+ * @property {number} additionalPension
+ * @property {number} unionFee
+ * @property {number} employerPension
+ * @property {number} employerSereignMatch
+ * @property {number} totalCompensation
+ */
+
+/**
  * Resolve a CSS custom property value from :root.
  *
  * @param {string} varName — e.g. '--color-gross'
@@ -31,6 +44,22 @@ function getRole(root, role) {
     throw new Error(`Element með data-role="${role}" fannst ekki.`);
   }
   return element;
+}
+
+/**
+ * Remember which disclosure groups a user has collapsed before their values rerender.
+ *
+ * @param {HTMLElement} container
+ * @returns {Map<string, boolean>}
+ */
+function getBreakdownGroupState(container) {
+  return new Map(
+    Array.from(container.querySelectorAll('details[data-breakdown-group]'))
+      .map((group) => [
+        /** @type {HTMLElement} */ (group).dataset.breakdownGroup ?? '',
+        /** @type {HTMLDetailsElement} */ (group).open,
+      ]),
+  );
 }
 
 /**
@@ -91,12 +120,14 @@ export function renderNetComparison(
  */
 export function renderBreakdown(root, result) {
   const container = getRole(root, 'breakdown-container');
+  const groupState = getBreakdownGroupState(container);
 
   if (result.grossSalary === 0) {
     container.innerHTML = '';
     return;
   }
 
+  /** @type {(term: string, value: number, modifiers?: string) => string} */
   const row = (term, value, modifiers = '') => `
     <div class="breakdown__row ${modifiers}">
       <span class="breakdown__term">${term}</span>
@@ -105,14 +136,16 @@ export function renderBreakdown(root, result) {
       }</span>
     </div>`;
 
+  /** @type {(term: string, value: number) => string} */
   const mutedRow = (term, value) => `
     <div class="breakdown__row breakdown__row--sub">
       <span class="breakdown__term">${term}</span>
       <span class="breakdown__value breakdown__value--muted">${formatISK(value)}</span>
     </div>`;
 
-  const groupOpen = (title) =>
-    `<details class="breakdown__group" open>` +
+  /** @type {(key: string, title: string) => string} */
+  const groupOpen = (key, title) =>
+    `<details class="breakdown__group" data-breakdown-group="${key}"${groupState.get(key) === false ? '' : ' open'}>` +
     `<summary class="breakdown__group-header">${title}</summary>` +
     `<div class="breakdown__group-body">`;
 
@@ -120,14 +153,14 @@ export function renderBreakdown(root, result) {
 
   let html = '';
 
-  html += groupOpen('Laun');
+  html += groupOpen('salary', 'Laun');
   html += row('Brúttólaun', result.grossSalary);
   if (result.vacationPayAmount > 0) {
     html += row('Orlof greitt út með launum', result.vacationPayAmount);
   }
   html += groupClose;
 
-  html += groupOpen('Frádráttur');
+  html += groupOpen('deductions', 'Frádráttur');
 
   if (result.pensionFundAmount > 0) {
     html += row('Lífeyrissjóður (4%)', -result.pensionFundAmount);
@@ -139,7 +172,7 @@ export function renderBreakdown(root, result) {
   html += row('Skattstofn', result.taxableBase);
   html += groupClose;
 
-  html += groupOpen('Staðgreiðsla');
+  html += groupOpen('withholding', 'Staðgreiðsla');
   html += row('Tekjuskattur (fyrir persónuafslátt)', -result.taxBeforeAllowance);
 
   result.bracketBreakdown
@@ -163,7 +196,7 @@ export function renderBreakdown(root, result) {
   html += groupClose;
 
   if (result.unionFeeAmount > 0) {
-    html += groupOpen('Aðrar greiðslur');
+    html += groupOpen('other-payments', 'Aðrar greiðslur');
     html += row('Iðgjald stéttarfélags', -result.unionFeeAmount);
     html += groupClose;
   }
@@ -186,20 +219,23 @@ export function renderBreakdown(root, result) {
  */
 export function renderEmployerBreakdown(root, result) {
   const container = getRole(root, 'employer-breakdown');
+  const groupState = getBreakdownGroupState(container);
 
   if (result.grossSalary === 0) {
     container.innerHTML = '';
     return;
   }
 
+  /** @type {(term: string, value: number) => string} */
   const row = (term, value) => `
     <div class="breakdown__row">
       <span class="breakdown__term">${term}</span>
       <span class="breakdown__value">${formatISK(value)}</span>
     </div>`;
 
-  const groupOpen = (title) =>
-    `<details class="breakdown__group" open>` +
+  /** @type {(key: string, title: string) => string} */
+  const groupOpen = (key, title) =>
+    `<details class="breakdown__group" data-breakdown-group="${key}"${groupState.get(key) === false ? '' : ' open'}>` +
     `<summary class="breakdown__group-header">${title}</summary>` +
     `<div class="breakdown__group-body">`;
 
@@ -207,7 +243,7 @@ export function renderEmployerBreakdown(root, result) {
 
   let html = '';
 
-  html += groupOpen('Kostnaður launagreiðanda');
+  html += groupOpen('employer-cost', 'Kostnaður launagreiðanda');
   html += row('Brúttólaun', result.grossSalary);
   if (result.vacationPayAmount > 0) {
     html += row('Orlof greitt út með launum', result.vacationPayAmount);
@@ -220,9 +256,10 @@ export function renderEmployerBreakdown(root, result) {
 
   html += `<div class="breakdown__group breakdown__group--total">
     <div class="breakdown__row breakdown__row--total">
-      <span class="breakdown__term">Heildarkostnaður</span>
+      <span class="breakdown__term">Laun og mótframlög samtals</span>
       <span class="breakdown__value">${formatISK(result.totalEmployerCost)}</span>
     </div>
+    <p class="field__hint">Tryggingagjald og annar launatengdur kostnaður er ekki innifalinn.</p>
   </div>`;
 
   container.innerHTML = html;
@@ -266,6 +303,7 @@ export function renderBottomGraph(root, result, curve, graphMax = 5_000_000, opt
   const CH = H - MT - MB;
   const MAX = graphMax;
 
+  /** @type {(gross: number) => number} */
   const toX = (gross) => ML + (gross / MAX) * CW;
 
   const colorNet = cssVar('--color-gross', '#164b59');
@@ -311,6 +349,7 @@ export function renderBottomGraph(root, result, curve, graphMax = 5_000_000, opt
 
   const maxShare = shareValues.length > 0 ? Math.max(...shareValues) : 1;
   const yMax = Math.max(1, Math.ceil(maxShare / 0.25) * 0.25);
+  /** @type {(share: number) => number} */
   const toY = (share) => MT + CH - (Math.max(share, 0) / yMax) * CH;
 
   const yTicks = [];
@@ -336,6 +375,7 @@ export function renderBottomGraph(root, result, curve, graphMax = 5_000_000, opt
       <text x="${x}" y="${MT + CH + 14}" text-anchor="middle" font-size="9" font-family="Inter,sans-serif" fill="${colorMuted}">${label}</text>`;
   }).join('\n      ');
 
+  /** @type {(points: CurvePoint[], getter: (point: CurvePoint) => number) => string} */
   const pts = (points, getter) => {
     const real = points.filter((point) => point.gross > 0);
     if (real.length === 0) return '';
@@ -363,9 +403,11 @@ export function renderBottomGraph(root, result, curve, graphMax = 5_000_000, opt
 
   const mx = toX(result.grossSalary).toFixed(1);
 
+  /** @type {(share: number, color: string) => string} */
   const solidDot = (share, color) =>
     `<circle cx="${mx}" cy="${toY(share).toFixed(1)}" r="3" fill="${color}"/>`;
 
+  /** @type {(share: number, color: string) => string} */
   const compareDot = (share, color) =>
     `<circle cx="${mx}" cy="${toY(share).toFixed(1)}" r="2.5" fill="${colorBg}" stroke="${color}" stroke-width="1.25"/>`;
 
@@ -406,6 +448,7 @@ export function renderBottomGraph(root, result, curve, graphMax = 5_000_000, opt
       ${marker}
     </svg>`;
 
+  /** @type {(key: string, label: string, value: string, modifiers?: string) => string} */
   const legendItem = (key, label, value, modifiers = '') => `
     <div class="bottom-graph__item ${modifiers}">
       <i class="bottom-graph__swatch bottom-graph__swatch--${key}" aria-hidden="true"></i>
